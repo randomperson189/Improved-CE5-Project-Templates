@@ -1,0 +1,33 @@
+{
+	"version": 4,
+	"type": "",
+	"info": {
+		"name": "Blank Game Template (Deprecated)",
+		"guid": "c3430350-8df7-32c9-b430-2361dc0b133e"
+	},
+	"content": {
+		"assets": [ "Assets" ],
+		"code": [ "" ],
+		"libs": [
+			{
+				"name": "Blank Game Template (Deprecated)",
+				"shared": { "any": "", "win_x64": "", "win_x86": "" }
+			}
+		]
+	},
+	"require": {
+		"engine": "engine-5.7",
+		"plugins": [
+			{ "guid": "", "type": "EType::Native", "path": "CryDefaultEntities" },
+            { "guid": "", "type": "EType::Native", "path": "CryScaleformSchematyc" },
+			{
+				"guid": "",
+				"type": "EType::Native",
+				"path": "CryGamePlatform",
+				"platforms": [ "PS4" ]
+			}
+		]
+	},
+	"console_variables": { "sys_target_platforms": "pc" },
+	"console_commands": { "map": "example" }
+}

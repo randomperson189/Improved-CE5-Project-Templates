@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="08ff8092-e597-2dbf-c753-b59a90963c49">
+ <Files>
+  <File path="defaultWeapon.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">1</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path>engineassets/textures/white.dds</Path>
+ </Dependencies>
+</AssetMetadata>

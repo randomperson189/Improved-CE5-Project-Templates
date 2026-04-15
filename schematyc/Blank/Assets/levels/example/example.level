@@ -1,0 +1,30 @@
+<Level WaterColor="16711680" SandboxVersion="1.0.0.0">
+ <View ViewerPos="511.62625,518.03064,34.494061" ViewerAngles="-0.66999984,0,-2.2139995"/>
+ <Fog Fog="" Terrain="" EnvState="" VolFogShadows="" CloudShadows="" VolumetricCloud="" SkyBox="" Ocean="" OceanAnimation="" Moon="" DynTexSource="" Total_Illumination_v2=""/>
+ <Missions Current="Mission0">
+  <Mission Name="Mission0" Description="" PlayerEquipPack="" Script="" MissionTime="12:00">
+   <ObjectLayers LayerVersion="2" Current="Main" CurrentGUID="f4882ac2-0960-c391-5c8e-78442ede9ac9">
+    <Layer Name="Main" FullName="Main" GUID="f4882ac2-0960-c391-5c8e-78442ede9ac9" Hidden="0" Frozen="0" Expanded="0" Type="0"/>
+   </ObjectLayers>
+   <Objects />
+   <Lighting SunRotation="240" SunHeight="80" Algorithm="3" Lighting="1" Shadows="1" ShadowIntensity="100" ILQuality="1" HemiSamplQuality="5" Longitude="90" DawnTime="355" DawnDuration="10" DuskTime="365" DuskDuration="10" SunVector="-0.51961529,-0.29999995,-0.79999989"/>
+   <Weapons>
+    <Used />
+    <Ammo />
+   </Weapons>
+   <MiniMap CenterX="512" CenterY="512" ExtendsX="512" ExtendsY="512" TexWidth="1024" TexHeight="1024"/>
+  </Mission>
+ </Missions>
+ <EntityPrototypesLibs>
+  <LevelLibrary Name="Level"/>
+ </EntityPrototypesLibs>
+ <PrefabsLibrary>
+  <LevelLibrary Name="Level"/>
+ </PrefabsLibrary>
+ <ParticleLibs>
+  <LevelLibrary Name="Level" SandboxVersion="1.0.0.0"/>
+ </ParticleLibs>
+ <FlareLibs>
+  <LevelLibrary Name="Level"/>
+ </FlareLibs>
+</Level>

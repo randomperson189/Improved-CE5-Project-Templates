@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="6a4d5f93-43b7-4d03-0ad9-95d60e06836e">
+ <Files>
+  <File path="PlayerTags.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TagDefinition</Detail>
+ </Details>
+</AssetMetadata>

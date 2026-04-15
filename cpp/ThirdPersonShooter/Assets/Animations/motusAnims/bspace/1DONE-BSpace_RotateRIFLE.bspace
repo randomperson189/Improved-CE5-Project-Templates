@@ -1,0 +1,14 @@
+<ParaGroup>
+ <Dimensions>
+  <Param Name="TurnAngle" Min="-1.5700001" Max="1.5700001" Cells="9" locked="1"/>
+ </Dimensions>
+ <ExampleList>
+  <Example AName="stepRifleAimRotate_rgt_90_3p" PlaybackScale="1.4"/>
+  <Example AName="rifleAim_idle_3p" PlaybackScale="4"/>
+  <Example AName="stepRifleAimRotate_lft_90_3p" PlaybackScale="1.23"/>
+ </ExampleList>
+ <Blendable>
+  <Face p0="0" p1="1"/>
+  <Face p0="1" p1="2"/>
+ </Blendable>
+</ParaGroup>

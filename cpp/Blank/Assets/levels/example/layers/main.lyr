@@ -1,0 +1,456 @@
+<ObjectLayer>
+ <Layer Name="Main" FullName="Main" GUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Hidden="0" Frozen="0" Expanded="0" Type="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1">
+  <LayerObjects>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="d5ae0cc3-b46f-b143-e7c1-65995a7915c7" Name="Entity-10" Pos="253.08168,264.151,32.72678" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="717b0887-c5f1-369c-c712-118d117e3d98" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="9eab83cb-a21a-b240-a4a9-7ac1fd973cd3" Name="Entity-9" Pos="261.01505,264.151,32.72678" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="6f7b744c-2275-1282-ce0b-bfce53e71741" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="61236a1a-68f9-93ea-5efc-c2996e0ee91d" Name="Entity-13" Pos="268.96341,264.151,24.691769" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="7b292ab4-5a9d-c5e6-ced7-3de4a0b44001" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="70032910-5b64-3ec6-002b-cdc5abba9746" Name="Entity-1" Pos="252.995,264.151,8.8331003" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="7fe88e78-da53-d74c-d0fe-f72830591480" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="bd6c0977-a36c-9cc5-5cf8-90407b10a1c5" Name="Entity-12" Pos="261.12604,264.151,24.691769" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="48900870-dc00-2e3a-e85a-f94fbc474bca" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="aa08c3ce-e213-e7fd-f3cf-9105b2592e4b" Name="Entity-5" Pos="268.96341,264.151,16.868113" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="784cf3b8-69f9-cd18-96a6-2d3cc6d37f3a" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="2e5b6604-271b-0ee4-3566-0aa7f7762ee2" Name="Entity-6" Pos="261.01505,264.151,16.868113" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="d8a7936a-531a-71fd-f86c-802f759b0967" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="e3d2d86c-798a-1278-e991-f5da717cc5b7" Name="Entity-2" Pos="261.12604,264.151,8.8331003" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="249d6513-8793-6e1a-dec4-a129242e3154" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="b686a7b3-a999-4e8e-7b83-fc4a9dd9836b" Name="Entity-3" Pos="268.96341,264.151,8.8331003" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="c718b746-e503-ef07-b0f1-bef7be9354f1" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="eb3e0ae5-95f3-0c46-6b19-a5e7e232a9bf" Name="Entity-7" Pos="253.08168,264.151,16.868113" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="32c6ba78-88a5-38fe-e925-786789b52400" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="d973fe8b-97fd-dbe3-853a-edb0e2d1080b" Name="Entity-8" Pos="268.96341,264.151,32.72678" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="896a3f1e-4e30-8b8b-95c3-9b005f16a342" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EmptyEntity" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="bf685253-2bc4-e099-1859-36c5e5b9d8f6" Name="Entity-11" Pos="252.995,264.151,24.691769" Rotate="1,0,0,0" Scale="2.7,2.7,2.7" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="6ddd0033-6aaa-4b71-b8ea-108258205e29" TypeName="Cry::DefaultComponents::CStaticMeshComponent" GUID="0f30009d-4be1-845c-bc61-3043a743269c" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Type="RenderAndCollider" FilePath="objects/sphere.cgf" Material="objects/helper_illum.mtl">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="10" Density="0"/>
+      </properties>
+     </Component>
+    </Components>
+    <FlowGraph Description="" Group="" enabled="1" MultiPlayer="ClientServer">
+     <Nodes>
+      <Node Id="8" Class="Movement:RotateEntity" pos="-126,-72,0" GraphEntity="0">
+       <Inputs entityId="0" Speed="0,0,50" Paused="0" Ref="0"/>
+      </Node>
+     </Nodes>
+     <Edges />
+     <GraphTokens />
+    </FlowGraph>
+   </Object>
+   <Object Type="EntityWithComponent" Layer="Main" LayerGUID="7dc816f2-d365-4bae-9111-912ced6e8f6a" Id="9edc1e67-f6e5-006b-5f32-bede3067e6b5" Name="EnvironmentProbe" Pos="284.85049,269.35068,77.251999" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component CryXmlVersion="2" TypeGUID="63297e89-ea00-4f56-ac23-2e93c68fe71d" TypeName="Cry::DefaultComponents::CEnvironmentProbeComponent" GUID="ebdedb14-d98a-fbb8-a059-c3162085072e" Name="" UserAdded="true">
+      <Transform>
+       <translation>
+        <position>
+         <element element="0"/>
+         <element element="0"/>
+         <element element="0"/>
+        </position>
+       </translation>
+       <rotation x="0" y="-0" z="0"/>
+       <scale>
+        <element element="1"/>
+        <element element="1"/>
+        <element element="1"/>
+       </scale>
+      </Transform>
+      <properties Active="true">
+       <BoxSize x="1000" y="1000" z="1000"/>
+       <Options IgnoreVisAreas="false" SortPriority="0" AttenuationFalloffMax="1" AffectVolumetricFog="true" VolumetricFogOnly="false" OnlyAffectThisArea="true" BoxProjection="false"/>
+       <Color DiffMult="1" SpecMult="1">
+        <Color r="1" g="1" b="1" a="1"/>
+       </Color>
+       <Generation GeneratedCubemapPath="textures\cubemaps\example\EnvironmentProbe_cm.tif" AutoLoad="true" Resolution="Low"/>
+      </properties>
+     </Component>
+    </Components>
+   </Object>
+  </LayerObjects>
+ </Layer>
+</ObjectLayer>

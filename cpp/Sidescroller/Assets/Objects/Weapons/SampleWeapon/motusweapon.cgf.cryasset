@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="d210b257-ecea-ad71-27d7-b277336cf653">
+ <Files>
+  <File path="motusweapon.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">2</Detail>
+  <Detail name="triangleCount">2920</Detail>
+  <Detail name="vertexCount">5626</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./defaultWeaponMAT.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

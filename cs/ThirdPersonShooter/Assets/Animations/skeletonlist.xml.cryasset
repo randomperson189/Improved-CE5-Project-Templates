@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="1f4fab9c-514f-784b-7e1d-9b4012caf56b">
+ <Files>
+  <File path="skeletonlist.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">SkeletonList</Detail>
+ </Details>
+</AssetMetadata>

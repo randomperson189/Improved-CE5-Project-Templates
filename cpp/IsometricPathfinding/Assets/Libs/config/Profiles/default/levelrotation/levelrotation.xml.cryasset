@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="25db9d85-d13d-3100-0689-4c3fbac9f083">
+ <Files>
+  <File path="levelrotation.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">levelRotation</Detail>
+ </Details>
+</AssetMetadata>

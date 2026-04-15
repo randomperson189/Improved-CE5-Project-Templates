@@ -1,0 +1,152 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="c1a311c5-7cb4-4cc5-95bb-2e6d07e99e75" scope="">
+ <root elementType="Class" guid="d65cab6a-7bf0-4157-b738-d318efe8fd29" name="Player">
+  <userDocumentation author="filipl" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="3c47f1e6-6b4c-4235-9e6c-aef6e87087bf" name="ConstructionGraph">
+    <userDocumentation author="filipl" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="30e128b2-8fc5-4e98-8a2a-add4ccb99abd" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="30e128b2-8fc5-4e98-8a2a-add4ccb99abd">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="28e80abc-ad19-4c99-a1e0-c8eeb6505f25" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="filipl" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="242" y="38"/>
+      <nodes>
+       <element key="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7" objectGUID="">
+         <pos x="476" y="-3"/>
+         <functionId domain="Env" guid="8a99e1ba-a5cd-4de8-a19f-d07df5d3b245"/>
+         <inputs>
+          <element value="0">
+           <key type="UInt32" value="6647412"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="e40f261b-d0b1-431b-80b0-b817f5862486" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="e40f261b-d0b1-431b-80b0-b817f5862486" objectGUID="">
+         <pos x="269" y="0"/>
+         <functionId domain="Env" guid="823518d1-6fe9-49da-a522-c1483385b70d"/>
+         <inputs>
+          <element value="SpawnPoint">
+           <key type="UInt32" value="1851878757"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="9649e696-cd33-443c-a5b3-a764e734763f" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="9649e696-cd33-443c-a5b3-a764e734763f" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="b5a28564-b348-4503-91c0-7347d4fea4c9" typeGUID="29c4ec3a-8e27-4d95-9c6d-8b3a19865fc2">
+        <value guid="b5a28564-b348-4503-91c0-7347d4fea4c9">
+         <pos x="480" y="-75"/>
+        </value>
+       </element>
+       <element key="94eee29a-13e2-4590-bd35-caa8e6c2d523" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="94eee29a-13e2-4590-bd35-caa8e6c2d523" objectGUID="">
+         <pos x="782" y="-18"/>
+         <functionId domain="Env" guid="fa08cea0-a0c5-4340-9f8a-e38d74488baf"/>
+         <inputs>
+          <element>
+           <key type="UInt32" value="29810"/>
+           <value x="1" y="1" z="1">
+                        <translation>
+                          <element element="0"/>
+                          <element element="0"/>
+                          <element element="0"/>
+                        </translation>
+                        <rotation x="0" y="0" z="0"/>
+                        <scale />
+           </value>
+          </element>
+          <element value="0">
+           <key type="UInt32" value="6647412"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="9519577b-6157-45f2-bbab-37f6e9f35f5d" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="9519577b-6157-45f2-bbab-37f6e9f35f5d" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="9268c1f8-d065-4e05-895d-274880de834e" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="9268c1f8-d065-4e05-895d-274880de834e" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+      </nodes>
+      <links>
+       <element srcNodeGUID="9268c1f8-d065-4e05-895d-274880de834e" dstNodeGUID="e40f261b-d0b1-431b-80b0-b817f5862486">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+       <element srcNodeGUID="e40f261b-d0b1-431b-80b0-b817f5862486" dstNodeGUID="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+       <element srcNodeGUID="e40f261b-d0b1-431b-80b0-b817f5862486" dstNodeGUID="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7">
+        <srcOutputId type="UInt32" value="6647412"/>
+        <dstInputId type="UInt32" value="6647412"/>
+       </element>
+       <element srcNodeGUID="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7" dstNodeGUID="94eee29a-13e2-4590-bd35-caa8e6c2d523">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+       <element srcNodeGUID="b5a28564-b348-4503-91c0-7347d4fea4c9" dstNodeGUID="94eee29a-13e2-4590-bd35-caa8e6c2d523">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="UInt32" value="6647412"/>
+       </element>
+       <element srcNodeGUID="d06b57a2-5eec-4220-9fa0-1bf3804fd7f7" dstNodeGUID="94eee29a-13e2-4590-bd35-caa8e6c2d523">
+        <srcOutputId type="UInt32" value="29810"/>
+        <dstInputId type="UInt32" value="29810"/>
+       </element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="b7560772-e98b-4320-8c07-5005d7794d4a" name="Base [Entity]">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="true"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="88dab2a5-8b1d-489d-a8a5-3edec9e0d81f" name="Entity" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+   <element elementType="ComponentInstance" guid="d2fc02e9-2124-4eb5-ae08-72ee0585609a" name="Roomscale VR Camera" accessor="Private" typeGUID="f30cef6c-c845-4833-bc58-eaf64a14fe90">
+    <properties Active="true" NearPlane="0.25" FarPlane="1024"/>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="02bf6a37-155f-4f6a-92c6-8b3498abb2c7" name="VR Interaction" accessor="Private" typeGUID="e7120655-5607-4530-9ac4-63f07a577fea">
+    <properties LeftHandModel="%ENGINE%/EngineAssets/Objects/primitive_sphere_small.cgf" RightHandModel="%ENGINE%/EngineAssets/Objects/primitive_sphere_small.cgf"/>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

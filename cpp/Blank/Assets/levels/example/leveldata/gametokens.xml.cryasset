@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{B7C4C1FE-201C-CD17-45B5-BC79B9EDE300}">
+ <Files>
+  <File path="gametokens.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">GameTokens</Detail>
+ </Details>
+</AssetMetadata>

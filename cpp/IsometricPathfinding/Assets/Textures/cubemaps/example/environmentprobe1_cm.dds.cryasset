@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="c073cc75-6b91-29f4-da8d-97cc0d70a11f">
+ <Files>
+  <File path="environmentprobe1_cm.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">1536</Detail>
+  <Detail name="height">256</Detail>
+  <Detail name="mipCount">7</Detail>
+ </Details>
+</AssetMetadata>

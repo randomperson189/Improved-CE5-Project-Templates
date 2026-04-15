@@ -1,0 +1,41 @@
+{
+	"version": 4,
+	"type": "",
+	"info": {
+		"name": "VR Game Template (Deprecated)",
+		"guid": "98597590-ca3f-4ea9-a793-7fab1b1cb787"
+	},
+	"content": {
+		"assets": [ "Assets" ],
+		"code": [ "" ],
+		"libs": [
+			{
+				"name": "VR Game Template (Deprecated)",
+				"shared": { "any": "", "win_x64": "", "win_x86": "" }
+			}
+		]
+	},
+	"require": {
+		"engine": "engine-5.7",
+		"plugins": [
+			{ "guid": "", "type": "EType::Native", "path": "CryDefaultEntities" },
+			{ "guid": "", "type": "EType::Native", "path": "CryOpenVR" },
+			{ "guid": "", "type": "EType::Native", "path": "CryOculusVR" },
+            { "guid": "", "type": "EType::Native", "path": "CryScaleformSchematyc" },
+			{
+				"guid": "",
+				"type": "EType::Native",
+				"path": "CryGamePlatform",
+				"platforms": [ "PS4" ]
+			},
+			{
+				"guid": "",
+				"type": "EType::Native",
+				"path": "CryGamePlatformPSN",
+				"platforms": [ "PS4" ]
+			}
+		]
+	},
+	"console_variables": { "sys_target_platforms": "pc", "sys_vr_support": "1" },
+	"console_commands": { }
+}
