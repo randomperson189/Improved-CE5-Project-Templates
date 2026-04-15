@@ -1,0 +1,5 @@
+*.log
+solutions/*
+user*/*
+logbackups/*
+Editor/*
