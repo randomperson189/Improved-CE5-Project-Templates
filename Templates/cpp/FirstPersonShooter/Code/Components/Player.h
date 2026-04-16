@@ -32,7 +32,9 @@ class CPlayerComponent final : public IEntityComponent
 		MoveLeft = 1 << 0,
 		MoveRight = 1 << 1,
 		MoveForward = 1 << 2,
-		MoveBack = 1 << 3
+		MoveBack = 1 << 3,
+		Jump = 1 << 4,
+		MouseMoved = 1 << 5
 	};
 	
 	static constexpr EEntityAspects InputAspect = eEA_GameClientD;
@@ -145,6 +147,20 @@ protected:
 	// Remote method intended to be called on all remote clients when a player spawns on the server
 	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
 	
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
+
 protected:
 	bool m_isAlive = false;
 
@@ -171,4 +187,7 @@ protected:
 	Quat m_lookOrientation; //!< Should translate to head orientation in the future
 	float m_horizontalAngularVelocity;
 	MovingAverage<float, 10> m_averagedHorizontalAngularVelocity;
+
+	float m_moveSpeed = 5.0f;
+	Vec2 m_movementDelta;
 };
