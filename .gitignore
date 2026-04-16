@@ -1,5 +1,5 @@
-*.log
-solutions/*
-user*/*
-logbackups/*
-Editor/*
+Templates/*/*/*.log
+Templates/*/*/solutions/*
+Templates/*/*/user*/*
+Templates/*/*/logbackups/*
+Templates/*/*/Editor/*
