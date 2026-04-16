@@ -253,18 +253,6 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 {
 	if (!m_pCharacterController) return;
 
-	IEntity* pEntity = m_pCharacterController->GetEntity();
-	if (!pEntity) return;
-
-	IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity();
-	if (!pPhysEnt) return;
-
-	pe_player_dynamics dyn;
-	if (!pPhysEnt->GetParams(&dyn))
-		dyn.bSwimming = 0; // default if no params available
-
-	bool bSwimming = dyn.bSwimming != 0;
-
 	// Base input vector
 	Vec3 input = Vec3(m_movementDelta.x, m_movementDelta.y, 0.0f);
 	if (input.GetLengthSquared() > 0.0f)
@@ -272,7 +260,7 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 
 	Vec3 finalVelocity = ZERO;
 
-	if (bSwimming)
+	if (IsSwimming())
 	{
 		if (m_pCameraComponent)
 		{
@@ -283,7 +271,7 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 	else
 	{
 		// Land movement: rotate input by entity rotation (XY only)
-		finalVelocity = pEntity->GetWorldRotation() * input * m_moveSpeed;
+		finalVelocity = GetEntity()->GetWorldRotation() * input * m_moveSpeed;
 	}
 
 	m_pCharacterController->SetVelocity(finalVelocity);
@@ -399,6 +387,25 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 
 	m_pCameraComponent->SetTransformMatrix(localTransform);
 	m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+}
+
+bool CPlayerComponent::IsSwimming()
+{
+	if (m_pCharacterController)
+	{
+		if (IEntity* pEntity = m_pCharacterController->GetEntity())
+		{
+			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
+			{
+				pe_player_dynamics dyn;
+				pPhysEnt->GetParams(&dyn);
+
+				return dyn.bSwimming;
+			}
+		}
+	}
+
+	return false;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()

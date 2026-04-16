@@ -126,6 +126,8 @@ protected:
 	// Called when this entity becomes the local player, to create client specific setup such as the Camera
 	void InitializeLocalPlayer();
 	
+	bool IsSwimming();
+
 	// Start remote method declarations
 protected:
 	// Parameters to be passed to the RemoteReviveOnClient function
