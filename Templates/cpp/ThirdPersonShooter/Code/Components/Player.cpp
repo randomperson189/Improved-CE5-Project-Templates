@@ -1,4 +1,4 @@
-// Copyright 2016-2020 Crytek GmbH / Crytek Group. All rights reserved.
+// Copyright 2017-2020 Crytek GmbH / Crytek Group. All rights reserved.
 #include "StdAfx.h"
 #include "Player.h"
 #include "Bullet.h"
@@ -9,6 +9,8 @@
 #include <CrySchematyc/Env/Elements/EnvComponent.h>
 #include <CryCore/StaticInstanceList.h>
 #include <CryNetwork/Rmi.h>
+
+#define MOUSE_DELTA_TRESHOLD 0.0001f
 
 namespace
 {
@@ -32,7 +34,7 @@ void CPlayerComponent::Initialize()
 
 	// Create the advanced animation component, responsible for updating Mannequin and animating the player
 	m_pAnimationComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
-	
+
 	// Set the player geometry, this also triggers physics proxy creation
 	m_pAnimationComponent->SetMannequinAnimationDatabaseFile("Animations/Mannequin/ADB/FirstPerson.adb");
 	m_pAnimationComponent->SetCharacterFile("Objects/Characters/SampleCharacter/thirdperson.cdf");
@@ -58,38 +60,72 @@ void CPlayerComponent::Initialize()
 	
 	// Register the RemoteReviveOnClient function as a Remote Method Invocation (RMI) that can be executed by the server on clients
 	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
+	SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
 }
 
 void CPlayerComponent::InitializeLocalPlayer()
 {
+	// Set the animation component to always update when out of view
+	if (ICharacterInstance* pCharacter = m_pAnimationComponent->GetCharacter())
+	{
+		pCharacter->SetFlags(pCharacter->GetFlags() | CS_FLAG_UPDATE_ALWAYS);
+
+		if (ISkeletonPose* pPose = pCharacter->GetISkeletonPose())
+		{
+			pPose->SetForceSkeletonUpdate(2);
+		}
+	}
+
 	// Create the camera component, will automatically update the viewport every frame
 	m_pCameraComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCameraComponent>();
+
+	m_pCameraComponent->Activate();
 
 	// Create the audio listener component.
 	m_pAudioListenerComponent = m_pEntity->GetOrCreateComponent<Cry::Audio::DefaultComponents::CListenerComponent>();
 
 	// Get the input component, wraps access to action mapping so we can easily get callbacks when inputs are triggered
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
-	
+
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
 	// Bind the 'A' key the "moveleft" action
-	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse,	EKeyId::eKI_A);
+	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, EKeyId::eKI_D);
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
-	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, EKeyId::eKI_W);
+	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, eKI_W);
 
-	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, EKeyId::eKI_S);
+	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, eKI_S);
 
-	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; });
+	m_pInputComponent->RegisterAction("player", "controllermove_x", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "controllermove_x", eAID_XboxPad, eKI_XI_ThumbLX);
+
+	m_pInputComponent->RegisterAction("player", "controllermove_y", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "controllermove_y", eAID_XboxPad, eKI_XI_ThumbLY);
+
+	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; HandleInputFlagChange(EInputFlag::MouseMoved, (EActionActivationMode)activationMode); });
 	m_pInputComponent->BindAction("player", "mouse_rotateyaw", eAID_KeyboardMouse, EKeyId::eKI_MouseX);
 
-	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; });
+	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; HandleInputFlagChange(EInputFlag::MouseMoved, (EActionActivationMode)activationMode); });
 	m_pInputComponent->BindAction("player", "mouse_rotatepitch", eAID_KeyboardMouse, EKeyId::eKI_MouseY);
+
+	m_pInputComponent->RegisterAction("player", "jump", [this](int activationMode, float value)
+	{
+		// Only jump if the button was pressed
+		if (activationMode == eAAM_OnPress)
+		{
+			if (m_pCharacterController->IsOnGround())
+				m_pCharacterController->AddVelocity(Vec3(0, 0, -m_pCharacterController->GetVelocity().z + 5.f));
+		}
+
+		HandleInputFlagChange(EInputFlag::Jump, (EActionActivationMode)activationMode);
+	});
+	m_pInputComponent->BindAction("player", "jump", eAID_KeyboardMouse, EKeyId::eKI_Space);
+	m_pInputComponent->BindAction("player", "jump", eAID_XboxPad, EKeyId::eKI_XI_A);
 
 	// Register the shoot action
 	m_pInputComponent->RegisterAction("player", "shoot", [this](int activationMode, float value)
@@ -105,21 +141,12 @@ void CPlayerComponent::InitializeLocalPlayer()
 				{
 					QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
 
-					SEntitySpawnParams spawnParams;
-					spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+					RemoteShootParams params;
+					params.position = bulletOrigin.t;
+					params.rotation = bulletOrigin.q;
 
-					spawnParams.vPosition = bulletOrigin.t;
-					spawnParams.qRotation = bulletOrigin.q;
-
-					const float bulletScale = 0.05f;
-					spawnParams.vScale = Vec3(bulletScale);
-
-					// Spawn the entity
-					if (IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
-					{
-						// See Bullet.cpp, bullet is propelled in  the rotation and position the entity was spawned with
-						pEntity->CreateComponentClass<CBulletComponent>();
-					}
+					// Tell server to spawn the bullet
+					SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::InvokeOnServer(this, std::move(params));
 				}
 			}
 		}
@@ -175,6 +202,12 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 	{
 		// Disable player when leaving game mode.
 		m_isAlive = event.nParam[0] != 0;
+
+		if (event.nParam[0] != 0)
+		{
+			// Reset player when entering game mode
+			OnReadyForGameplayOnServer();
+		}
 	}
 	break;
 	}
@@ -212,38 +245,36 @@ bool CPlayerComponent::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8
 
 		ser.EndGroup();
 	}
-	
+
 	return true;
 }
 
 void CPlayerComponent::UpdateMovementRequest(float frameTime)
 {
-	// Don't handle input if we are in air
-	if (!m_pCharacterController->IsOnGround())
-		return;
+	if (!m_pCharacterController) return;
 
-	Vec3 velocity = ZERO;
+	// Base input vector
+	Vec3 input = Vec3(m_movementDelta.x, m_movementDelta.y, 0.0f);
+	if (input.GetLengthSquared() > 0.0f)
+		input.Normalize();
 
-	const float moveSpeed = 20.5f;
+	Vec3 finalVelocity = ZERO;
 
-	if (m_inputFlags & EInputFlag::MoveLeft)
+	if (IsSwimming())
 	{
-		velocity.x -= moveSpeed * frameTime;
+		if (m_pCameraComponent)
+		{
+			// Rotate input by camera rotation (includes pitch) for 3D swimming
+			finalVelocity = m_pCameraComponent->GetCamera().GetMatrix().TransformVector(input) * m_moveSpeed;
+		}
 	}
-	if (m_inputFlags & EInputFlag::MoveRight)
+	else
 	{
-		velocity.x += moveSpeed * frameTime;
-	}
-	if (m_inputFlags & EInputFlag::MoveForward)
-	{
-		velocity.y += moveSpeed * frameTime;
-	}
-	if (m_inputFlags & EInputFlag::MoveBack)
-	{
-		velocity.y -= moveSpeed * frameTime;
+		// Land movement: rotate input by entity rotation (XY only)
+		finalVelocity = GetEntity()->GetWorldRotation() * input * m_moveSpeed;
 	}
 
-	m_pCharacterController->AddVelocity(GetEntity()->GetWorldRotation() * velocity);
+	m_pCharacterController->SetVelocity(finalVelocity);
 }
 
 void CPlayerComponent::UpdateLookDirectionRequest(float frameTime)
@@ -253,11 +284,14 @@ void CPlayerComponent::UpdateLookDirectionRequest(float frameTime)
 	const float rotationLimitsMaxPitch = 1.5f;
 
 	// Apply smoothing filter to the mouse input
-	m_mouseDeltaRotation = m_mouseDeltaSmoothingFilter.Push(m_mouseDeltaRotation).Get();
+	//m_mouseDeltaRotation = m_mouseDeltaSmoothingFilter.Push(m_mouseDeltaRotation).Get();
 
 	// Update angular velocity metrics
 	m_horizontalAngularVelocity = (m_mouseDeltaRotation.x * rotationSpeed) / frameTime;
 	m_averagedHorizontalAngularVelocity.Push(m_horizontalAngularVelocity);
+
+	//if (m_mouseDeltaRotation.IsEquivalent(ZERO, MOUSE_DELTA_TRESHOLD))
+		//return;
 
 	// Start with updating look orientation from the latest input
 	Ang3 ypr = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
@@ -334,17 +368,36 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
 }
 
+bool CPlayerComponent::IsSwimming()
+{
+	if (m_pCharacterController)
+	{
+		if (IEntity* pEntity = m_pCharacterController->GetEntity())
+		{
+			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
+			{
+				pe_player_dynamics dyn;
+				pPhysEnt->GetParams(&dyn);
+
+				return dyn.bSwimming;
+			}
+		}
+	}
+
+	return false;
+}
+
 void CPlayerComponent::OnReadyForGameplayOnServer()
 {
 	CRY_ASSERT(gEnv->bServer, "This function should only be called on the server!");
-	
+
 	const Matrix34 newTransform = CSpawnPointComponent::GetFirstSpawnPointTransform();
 	
 	Revive(newTransform);
 	
 	// Invoke the RemoteReviveOnClient function on all remote clients, to ensure that Revive is called across the network
 	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnOtherClients(this, RemoteReviveParams{ newTransform.GetTranslation(), Quat(newTransform) });
-	
+
 	// Go through all other players, and send the RemoteReviveOnClient on their instances to the new player that is ready for gameplay
 	const int channelId = m_pEntity->GetNetEntity()->GetChannelId();
 	CGamePlugin::GetInstance()->IterateOverPlayers([this, channelId](CPlayerComponent& player)
@@ -361,6 +414,27 @@ void CPlayerComponent::OnReadyForGameplayOnServer()
 		const QuatT currentOrientation = QuatT(player.GetEntity()->GetWorldTM());
 		SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnClient(&player, RemoteReviveParams{ currentOrientation.t, currentOrientation.q }, channelId);
 	});
+}
+
+bool CPlayerComponent::RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel)
+{
+	SEntitySpawnParams spawnParams;
+	spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+
+	spawnParams.vPosition = params.position;
+	spawnParams.qRotation = params.rotation;
+
+	const float bulletScale = 0.05f;
+	spawnParams.vScale = Vec3(bulletScale);
+
+	// Spawn the entity
+	if (IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
+	{
+		// See Bullet.cpp, bullet is propelled in  the rotation and position the entity was spawned with
+		pEntity->CreateComponentClass<CBulletComponent>();
+	}
+
+	return true;
 }
 
 bool CPlayerComponent::RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel)
@@ -382,7 +456,7 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 		m_pEntity->SetWorldTM(transform);
 	}
 	
-	// Apply character to the entity
+	// Apply the character to the entity and queue animations
 	m_pAnimationComponent->ResetCharacter();
 	m_pCharacterController->Physicalize();
 
@@ -391,11 +465,12 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	NetMarkAspectsDirty(InputAspect);
 	
 	m_mouseDeltaRotation = ZERO;
+	m_lookOrientation = m_pEntity->GetRotation();
+
 	m_mouseDeltaSmoothingFilter.Reset();
 
 	m_activeFragmentId = FRAGMENT_ID_INVALID;
 
-	m_lookOrientation = IDENTITY;
 	m_horizontalAngularVelocity = 0.0f;
 	m_averagedHorizontalAngularVelocity.Reset();
 }

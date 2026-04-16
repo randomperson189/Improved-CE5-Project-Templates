@@ -1,4 +1,4 @@
-// Copyright 2016-2019 Crytek GmbH / Crytek Group. All rights reserved.
+// Copyright 2017-2019 Crytek GmbH / Crytek Group. All rights reserved.
 #pragma once
 
 #include <array>
@@ -32,7 +32,9 @@ class CPlayerComponent final : public IEntityComponent
 		MoveLeft = 1 << 0,
 		MoveRight = 1 << 1,
 		MoveForward = 1 << 2,
-		MoveBack = 1 << 3
+		MoveBack = 1 << 3,
+		Jump = 1 << 4,
+		MouseMoved = 1 << 5
 	};
 	
 	static constexpr EEntityAspects InputAspect = eEA_GameClientD;
@@ -90,7 +92,7 @@ class CPlayerComponent final : public IEntityComponent
 
 public:
 	CPlayerComponent() = default;
-	virtual ~CPlayerComponent() {}
+	virtual ~CPlayerComponent() = default;
 
 	// IEntityComponent
 	virtual void Initialize() override;
@@ -110,22 +112,22 @@ public:
 
 	void OnReadyForGameplayOnServer();
 	bool IsLocalClient() const { return (m_pEntity->GetFlags() & ENTITY_FLAG_LOCAL_PLAYER) != 0; }
-	
+
 protected:
 	void Revive(const Matrix34& transform);
-	
+
 	void UpdateMovementRequest(float frameTime);
 	void UpdateLookDirectionRequest(float frameTime);
 	void UpdateAnimation(float frameTime);
 	void UpdateCamera(float frameTime);
-
-	void CreateWeapon(const char *name);
 
 	void HandleInputFlagChange(CEnumFlags<EInputFlag> flags, CEnumFlags<EActionActivationMode> activationMode, EInputFlagType type = EInputFlagType::Hold);
 
 	// Called when this entity becomes the local player, to create client specific setup such as the Camera
 	void InitializeLocalPlayer();
 	
+	bool IsSwimming();
+
 	// Start remote method declarations
 protected:
 	// Parameters to be passed to the RemoteReviveOnClient function
@@ -147,6 +149,20 @@ protected:
 	// Remote method intended to be called on all remote clients when a player spawns on the server
 	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
 	
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
+
 protected:
 	bool m_isAlive = false;
 
@@ -164,9 +180,14 @@ protected:
 	Vec2 m_mouseDeltaRotation;
 	MovingAverage<Vec2, 10> m_mouseDeltaSmoothingFilter;
 
+	const float m_rotationSpeed = 0.002f;
+
 	FragmentID m_activeFragmentId;
 
 	Quat m_lookOrientation; //!< Should translate to head orientation in the future
 	float m_horizontalAngularVelocity;
 	MovingAverage<float, 10> m_averagedHorizontalAngularVelocity;
+
+	float m_moveSpeed = 5.0f;
+	Vec2 m_movementDelta;
 };
