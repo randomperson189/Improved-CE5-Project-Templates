@@ -1,0 +1,24 @@
+<AssetMetadata version="0" type="Level" guid="984fcd77-e594-2b34-fbf5-414a47e0d684" source="" timestamp="1776364764">
+ <Files>
+  <File path="example/example.level"/>
+ </Files>
+ <Dependencies>
+  <Path>%editor%/objects/envcube.cgf</Path>
+  <Path>%engine%/config/defaultscripts/compressionpolicy.xml</Path>
+  <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/livepreview.dds</Path>
+  <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/materials/material_default.mtl</Path>
+  <Path>%engine%/engineassets/objects/primitive_cube.cgf</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>%engine%/engineassets/textures/white.dds</Path>
+  <Path>animations/motusanims/rifleanims/rifleaim_idle_3p.caf</Path>
+  <Path usageCount="1">libs/environmentpresets/example.env</Path>
+  <Path>objects/characters/samplecharacter/firstperson.cdf</Path>
+  <Path>objects/characters/samplecharacter/motusbodyheadless.skin</Path>
+  <Path>objects/characters/samplecharacter/skelproxy.chr</Path>
+  <Path>objects/weapons/sampleweapon/defaultweapon.cgf</Path>
+  <Path>scripts/network/compressionpolicy.xml</Path>
+ </Dependencies>
+</AssetMetadata>

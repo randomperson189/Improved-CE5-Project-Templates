@@ -1,0 +1,152 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="30e5bb04-3254-4475-9f9a-92abc50b1025" scope="">
+ <root elementType="Class" guid="2d891990-7837-4673-b0fa-1b30a552f28f" name="player" Schematyc::EMPEnv="clientserver">
+  <userDocumentation author="User" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="dbe3e67e-78c4-48c0-8166-a48ceef7e13d" name="ConstructionGraph" Schematyc::EMPEnv="clientserver">
+    <userDocumentation author="User" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="0c5529b5-b79b-4ef9-8876-6945cfddeb8c" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="0c5529b5-b79b-4ef9-8876-6945cfddeb8c">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="b9f6a662-90fc-4911-99f1-95ac20afa5b9" name="SignalGraph" Schematyc::EMPEnv="clientserver" type="Universal" signalGUID="">
+    <userDocumentation author="User" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="f998925a-d192-40db-8c0c-61b6f2c7a39c" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="f998925a-d192-40db-8c0c-61b6f2c7a39c" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="bd129aec-c994-41de-828d-217b77e8069b" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="bd129aec-c994-41de-828d-217b77e8069b" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+       <element key="f98a314f-2c93-4b10-a9dc-504b805df9fa" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="f98a314f-2c93-4b10-a9dc-504b805df9fa" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="e78a379b-2aca-4509-b87a-36a43b5f2394" name="Base [Entity]" Schematyc::EMPEnv="clientserver">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="false"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="839d1b54-2728-4f0f-8c56-1078fac0c488" name="Entity" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+   <element elementType="ComponentInstance" guid="49480795-1c51-4ee3-928f-e4678b5a9e5f" name="CPlayerComponent" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="63f4c0c6-32af-4acb-8fb0-57d45dd14725">
+    <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="89784630-c3af-4a6f-bdb3-7f72a04626b2" name="Advanced Animations" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="3cd5ddc5-ee15-437f-a997-79c2391537fe">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="0"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Type="RenderAndCollider" Character="Objects/Characters/SampleCharacter/thirdperson.cdf" Material="" DatabasePath="Animations/Mannequin/ADB/FirstPerson.adb" ControllerDefPath="Animations/Mannequin/ADB/FirstPersonControllerDefinition.xml" DefaultScope="FirstPersonCharacter" DefaultFragment="Idle" AnimDriven="true" GroundAlign="false">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" IgnoreTerrainLayerBlend="false" IgnoreDecalBlend="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="0f3bdfc3-66f4-4cd9-90b5-1512486ab6b8" name="Camera" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="a4cb0508-5f07-46b4-b6d4-ab76bfd550f4">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="0"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Type="Default" Active="false" NearPlane="0.1" FarPlane="8000" FieldOfView="1.2217305"/>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="6e8bcb28-b9ef-4197-a29e-59136d644858" name="Input" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="183e3c84-2e08-4506-95fa-b362f7e735e9">
+    <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="dd099b13-0e5a-48d3-979f-4d0e30295e81" name="Character Controller" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="98183f31-a685-43cd-92a9-815274f0a81c">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="1"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Networked="false">
+     <Physics Mass="80" Radius="0.44999999" Height="0.935" Capsule="true" GroundContactEps="0.0040000002" SendCollisionSignal="false"/>
+     <Movement AirControl="0" AirResistance="0.2" Inertia="8" InertiaAcc="8" MaxClimb="0.87266463" MaxJump="0.87266463" MinSlide="1.2217305" MinFall="1.3962634" MaxGroundVelocity="16"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="2456bfc1-a00a-4477-a44f-74b44c60a2a4" name="Listener" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="bae91d5c-8cfb-40b2-8397-f5a9eedb9ac4">
+    <properties>
+     <listener name="Default Listener">
+      <offset x="0" y="0" z="0"/>
+     </listener>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

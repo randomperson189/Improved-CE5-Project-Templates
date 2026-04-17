@@ -2,7 +2,7 @@
 	"version": 4,
 	"type": "",
 	"info": {
-		"name": "VR Game Template (Deprecated)",
+		"name": "VR Game Template",
 		"guid": "98597590-ca3f-4ea9-a793-7fab1b1cb787"
 	},
 	"content": {
@@ -10,7 +10,7 @@
 		"code": [ "" ],
 		"libs": [
 			{
-				"name": "VR Game Template (Deprecated)",
+				"name": "VR Game Template",
 				"shared": { "any": "", "win_x64": "", "win_x86": "" }
 			}
 		]

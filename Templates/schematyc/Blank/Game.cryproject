@@ -2,7 +2,7 @@
 	"version": 4,
 	"type": "",
 	"info": {
-		"name": "Blank Game Template (Deprecated)",
+		"name": "Blank Game Template",
 		"guid": "c3430350-8df7-32c9-b430-2361dc0b133e"
 	},
 	"content": {
@@ -10,7 +10,7 @@
 		"code": [ "" ],
 		"libs": [
 			{
-				"name": "Blank Game Template (Deprecated)",
+				"name": "Blank Game Template",
 				"shared": { "any": "", "win_x64": "", "win_x86": "" }
 			}
 		]

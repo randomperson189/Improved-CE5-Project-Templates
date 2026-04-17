@@ -1,0 +1,37 @@
+<AssetMetadata version="0" type="Level" guid="90f6f9d4-0804-283c-02dc-2d438ba572bd" source="" timestamp="1776366009">
+ <Files>
+  <File path="example/example.level"/>
+ </Files>
+ <Dependencies>
+  <Path>%editor%/objects/envcube.cgf</Path>
+  <Path>%editor%/objects/envcube.mtl</Path>
+  <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/livepreview.dds</Path>
+  <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumebox.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumeellipsoid.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceaninto.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanintolowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/material_default.mtl</Path>
+  <Path>%engine%/engineassets/materials/material_terrain_default.mtl</Path>
+  <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
+  <Path>%engine%/engineassets/objects/primitive_cube.cgf</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultnouvs.dds</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>%engine%/engineassets/textures/skys/night/half_moon.dds</Path>
+  <Path>%engine%/engineassets/textures/white.dds</Path>
+  <Path>animations/motusanims/rifleanims/rifleaim_idle_3p.caf</Path>
+  <Path>engineassets/materials/water/ocean_default.mtl</Path>
+  <Path usageCount="1">libs/environmentpresets/example.env</Path>
+  <Path>objects/characters/samplecharacter/mcg_ddna.dds</Path>
+  <Path>objects/characters/samplecharacter/motusbody.skin</Path>
+  <Path>objects/characters/samplecharacter/skelproxy.chr</Path>
+  <Path>objects/characters/samplecharacter/thirdperson.cdf</Path>
+  <Path>objects/weapons/sampleweapon/defaultweapon.cgf</Path>
+  <Path>textures/cubemaps/example/environmentprobe1_cm.dds</Path>
+  <Path>textures/cubemaps/example/environmentprobe1_cm_diff.dds</Path>
+ </Dependencies>
+</AssetMetadata>
