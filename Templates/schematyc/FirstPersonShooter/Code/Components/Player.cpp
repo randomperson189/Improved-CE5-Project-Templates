@@ -7,6 +7,8 @@
 
 #include <CryRenderer/IRenderAuxGeom.h>
 #include <CrySchematyc/Env/Elements/EnvComponent.h>
+#include <CrySchematyc/Env/Elements/EnvFunction.h>
+#include <CrySchematyc/Env/Elements/EnvSignal.h>
 #include <CryCore/StaticInstanceList.h>
 #include <CryNetwork/Rmi.h>
 
@@ -19,10 +21,28 @@ namespace
 		Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CPlayerComponent));
+
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::Jump, "{DF2A9AE7-7724-4684-89F6-9DF336F61AC2}"_cry_guid, "Jump");
+				componentScope.Register(pFunction);
+			}
+
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::Shoot, "{899ADE13-94B7-417C-8F41-1B4D69F93904}"_cry_guid, "Shoot");
+				componentScope.Register(pFunction);
+			}
+
+			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
 		}
 	}
 
 	CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterPlayerComponent);
+}
+
+static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SInitializeLocalPlayer>& desc)
+{
+	desc.SetGUID("{A0411357-E8B6-4BDC-AF4F-DF49263897DF}"_cry_guid);
+	desc.SetLabel("Initialize Local Player");
 }
 
 void CPlayerComponent::Initialize()
@@ -96,47 +116,11 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { m_mouseDeltaRotation.y -= value; HandleInputFlagChange(EInputFlag::MouseMoved, (EActionActivationMode)activationMode); });
 	m_pInputComponent->BindAction("player", "mouse_rotatepitch", eAID_KeyboardMouse, EKeyId::eKI_MouseY);
 
-	m_pInputComponent->RegisterAction("player", "jump", [this](int activationMode, float value)
+	// Our local player has initialized, now call the Schematyc signal for it
+	if (Schematyc::IObject* const pSchematycObject = m_pEntity->GetSchematycObject())
 	{
-		// Only jump if the button was pressed
-		if (activationMode == eAAM_OnPress)
-		{
-			if (m_pCharacterController->IsOnGround())
-				m_pCharacterController->AddVelocity(Vec3(0, 0, -m_pCharacterController->GetVelocity().z + 5.f));
-		}
-
-		HandleInputFlagChange(EInputFlag::Jump, (EActionActivationMode)activationMode);
-	});
-	m_pInputComponent->BindAction("player", "jump", eAID_KeyboardMouse, EKeyId::eKI_Space);
-	m_pInputComponent->BindAction("player", "jump", eAID_XboxPad, EKeyId::eKI_XI_A);
-
-	// Register the shoot action
-	m_pInputComponent->RegisterAction("player", "shoot", [this](int activationMode, float value)
-	{
-		// Only fire on press, not release
-		if (activationMode == eAAM_OnPress)
-		{
-			if (ICharacterInstance *pCharacter = m_pAnimationComponent->GetCharacter())
-			{
-				IAttachment* pBarrelOutAttachment = pCharacter->GetIAttachmentManager()->GetInterfaceByName("barrel_out");
-
-				if (pBarrelOutAttachment != nullptr)
-				{
-					QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
-
-					RemoteShootParams params;
-					params.position = bulletOrigin.t;
-					params.rotation = bulletOrigin.q;
-
-					// Tell server to spawn the bullet
-					SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::InvokeOnServer(this, std::move(params));
-				}
-			}
-		}
-	});
-
-	// Bind the shoot action to left mouse click
-	m_pInputComponent->BindAction("player", "shoot", eAID_KeyboardMouse, EKeyId::eKI_Mouse1);
+		m_pEntity->GetSchematycObject()->ProcessSignal(SInitializeLocalPlayer(), GetGUID());
+	}
 }
 
 Cry::Entity::EventFlags CPlayerComponent::GetEventMask() const
@@ -262,15 +246,11 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 
 void CPlayerComponent::UpdateLookDirectionRequest(float frameTime)
 {
-	const float rotationSpeed = 0.002f;
-	const float rotationLimitsMinPitch = -0.84f;
-	const float rotationLimitsMaxPitch = 1.5f;
-
 	// Apply smoothing filter to the mouse input
 	//m_mouseDeltaRotation = m_mouseDeltaSmoothingFilter.Push(m_mouseDeltaRotation).Get();
 
 	// Update angular velocity metrics
-	m_horizontalAngularVelocity = (m_mouseDeltaRotation.x * rotationSpeed) / frameTime;
+	m_horizontalAngularVelocity = (m_mouseDeltaRotation.x * m_rotationSpeed) / frameTime;
 	m_averagedHorizontalAngularVelocity.Push(m_horizontalAngularVelocity);
 
 	//if (m_mouseDeltaRotation.IsEquivalent(ZERO, MOUSE_DELTA_TRESHOLD))
@@ -280,11 +260,11 @@ void CPlayerComponent::UpdateLookDirectionRequest(float frameTime)
 	Ang3 ypr = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
 
 	// Yaw
-	ypr.x += m_mouseDeltaRotation.x * rotationSpeed;
+	ypr.x += m_mouseDeltaRotation.x * m_rotationSpeed;
 
 	// Pitch
 	// TODO: Perform soft clamp here instead of hard wall, should reduce rot speed in this direction when close to limit.
-	ypr.y = CLAMP(ypr.y + m_mouseDeltaRotation.y * rotationSpeed, rotationLimitsMinPitch, rotationLimitsMaxPitch);
+	ypr.y = CLAMP(ypr.y + m_mouseDeltaRotation.y * m_rotationSpeed, m_rotationLimitsMinPitch, m_rotationLimitsMaxPitch);
 
 	// Roll (skip)
 	ypr.z = 0;
@@ -337,11 +317,8 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 
 	ypr.x += m_mouseDeltaRotation.x * m_rotationSpeed;
 
-	const float rotationLimitsMinPitch = -0.84f;
-	const float rotationLimitsMaxPitch = 1.5f;
-
 	// TODO: Perform soft clamp here instead of hard wall, should reduce rot speed in this direction when close to limit.
-	ypr.y = CLAMP(ypr.y + m_mouseDeltaRotation.y * m_rotationSpeed, rotationLimitsMinPitch, rotationLimitsMaxPitch);
+	ypr.y = CLAMP(ypr.y + m_mouseDeltaRotation.y * m_rotationSpeed, m_rotationLimitsMinPitch, m_rotationLimitsMaxPitch);
 	// Skip roll
 	ypr.z = 0;
 
@@ -370,6 +347,31 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 
 	m_pCameraComponent->SetTransformMatrix(localTransform);
 	m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+}
+
+void CPlayerComponent::Jump()
+{
+	m_pCharacterController->AddVelocity(Vec3(0, 0, -m_pCharacterController->GetVelocity().z + m_jumpHeight));
+}
+
+void CPlayerComponent::Shoot()
+{
+	if (ICharacterInstance *pCharacter = m_pAnimationComponent->GetCharacter())
+	{
+		IAttachment* pBarrelOutAttachment = pCharacter->GetIAttachmentManager()->GetInterfaceByName("barrel_out");
+
+		if (pBarrelOutAttachment != nullptr)
+		{
+			QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
+
+			RemoteShootParams params;
+			params.position = bulletOrigin.t;
+			params.rotation = bulletOrigin.q;
+
+			// Tell server to spawn the bullet
+			SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::InvokeOnServer(this, std::move(params));
+		}
+	}
 }
 
 bool CPlayerComponent::IsSwimming()

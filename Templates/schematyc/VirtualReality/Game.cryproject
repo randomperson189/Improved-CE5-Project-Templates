@@ -36,6 +36,6 @@
 			}
 		]
 	},
-	"console_variables": { "sys_target_platforms": "pc", "sys_vr_support": "1" },
+	"console_variables": { "sys_target_platforms": "pc", "sys_vr_support": "1", "es_EnableFlowgraphComponents": "1", "sc_allowFlowGraphNodes": "1" },
 	"console_commands": { }
 }

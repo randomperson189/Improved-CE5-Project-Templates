@@ -108,6 +108,11 @@ public:
 	static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
 	{
 		desc.SetGUID("{63F4C0C6-32AF-4ACB-8FB0-57D45DD14725}"_cry_guid);
+		desc.AddMember(&CPlayerComponent::m_moveSpeed, 'mspd', "MoveSpeed", "Move Speed", "Speed of the player", 5.0f);
+		desc.AddMember(&CPlayerComponent::m_rotationSpeed, 'rspd', "RotationSpeed", "Rotation Speed", "Speed at which the player rotates", 0.002f);
+		desc.AddMember(&CPlayerComponent::m_rotationLimitsMinPitch, 'minp', "RotationLimitsMinPitch", "Rotation Limits Min Pitch", "Minimum rotation pitch limit", -0.84f);
+		desc.AddMember(&CPlayerComponent::m_rotationLimitsMaxPitch, 'maxp', "RotationLimitsMaxPitch", "Rotation Limits Max Pitch", "Maximum rotation pitch limit", 1.5f);
+		desc.AddMember(&CPlayerComponent::m_jumpHeight, 'jhgt', "JumpHeight", "Jump Height", "Height at which the player jumps", 5.0f);
 	}
 
 	void OnReadyForGameplayOnServer();
@@ -125,8 +130,6 @@ protected:
 
 	// Called when this entity becomes the local player, to create client specific setup such as the Camera
 	void InitializeLocalPlayer();
-	
-	bool IsSwimming();
 
 	// Start remote method declarations
 protected:
@@ -180,7 +183,11 @@ protected:
 	Vec2 m_mouseDeltaRotation;
 	MovingAverage<Vec2, 10> m_mouseDeltaSmoothingFilter;
 
-	const float m_rotationSpeed = 0.002f;
+	float m_rotationSpeed = 0.002f;
+	float m_rotationLimitsMinPitch = -0.84f;
+	float m_rotationLimitsMaxPitch = 1.5f;
+
+	float m_jumpHeight = 5.0f;
 
 	int m_cameraJointId = -1;
 
@@ -192,4 +199,15 @@ protected:
 
 	float m_moveSpeed = 5.0f;
 	Vec2 m_movementDelta;
+
+public:
+	void Jump();
+	void Shoot();
+
+	bool IsSwimming();
+
+	struct SInitializeLocalPlayer
+	{
+		SInitializeLocalPlayer() = default;
+	};
 };
