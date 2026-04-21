@@ -193,19 +193,19 @@
     <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="false"/>
     <extensions />
     <children>
-     <element elementType="ComponentInstance" guid="839d1b54-2728-4f0f-8c56-1078fac0c488" name="Entity" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+     <element elementType="ComponentInstance" guid="839d1b54-2728-4f0f-8c56-1078fac0c488" name="Entity" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
       <properties />
       <extensions />
       <children />
      </element>
     </children>
    </element>
-   <element elementType="ComponentInstance" guid="49480795-1c51-4ee3-928f-e4678b5a9e5f" name="CPlayerComponent" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="63f4c0c6-32af-4acb-8fb0-57d45dd14725">
-    <properties MoveSpeed="5" RotationSpeed="0.0020000001" RotationLimitsMinPitch="-0.83999997" RotationLimitsMaxPitch="1.5" ViewOffsetForward="-1.5" JumpHeight="5"/>
+   <element elementType="ComponentInstance" guid="49480795-1c51-4ee3-928f-e4678b5a9e5f" name="CPlayerComponent" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="63f4c0c6-32af-4acb-8fb0-57d45dd14725">
+    <properties MoveSpeed="5" RotationSpeed="0.0020000001" RotationLimitsMinPitch="-0.83999997" RotationLimitsMaxPitch="1.5" ViewOffsetForward="-1.5" ViewOffsetUp="2" JumpHeight="5"/>
     <extensions />
     <children />
    </element>
-   <element elementType="ComponentInstance" guid="89784630-c3af-4a6f-bdb3-7f72a04626b2" name="Advanced Animations" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="3cd5ddc5-ee15-437f-a997-79c2391537fe">
+   <element elementType="ComponentInstance" guid="89784630-c3af-4a6f-bdb3-7f72a04626b2" name="Advanced Animations" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="3cd5ddc5-ee15-437f-a997-79c2391537fe">
     <transform>
      <translation>
       <position>
@@ -228,7 +228,7 @@
     <extensions />
     <children />
    </element>
-   <element elementType="ComponentInstance" guid="0f3bdfc3-66f4-4cd9-90b5-1512486ab6b8" name="Camera" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="a4cb0508-5f07-46b4-b6d4-ab76bfd550f4">
+   <element elementType="ComponentInstance" guid="0f3bdfc3-66f4-4cd9-90b5-1512486ab6b8" name="Camera" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="a4cb0508-5f07-46b4-b6d4-ab76bfd550f4">
     <transform>
      <translation>
       <position>
@@ -237,7 +237,7 @@
        <element element="1.8348856"/>
       </position>
      </translation>
-     <rotation x="-2.8647563" y="-0" z="-0"/>
+     <rotation x="-2.8647568" y="-0" z="-0"/>
      <scale>
       <element element="1"/>
       <element element="0.99999994"/>
@@ -248,12 +248,12 @@
     <extensions />
     <children />
    </element>
-   <element elementType="ComponentInstance" guid="6e8bcb28-b9ef-4197-a29e-59136d644858" name="Input" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="183e3c84-2e08-4506-95fa-b362f7e735e9">
+   <element elementType="ComponentInstance" guid="6e8bcb28-b9ef-4197-a29e-59136d644858" name="Input" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="183e3c84-2e08-4506-95fa-b362f7e735e9">
     <properties />
     <extensions />
     <children />
    </element>
-   <element elementType="ComponentInstance" guid="dd099b13-0e5a-48d3-979f-4d0e30295e81" name="Character Controller" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="98183f31-a685-43cd-92a9-815274f0a81c">
+   <element elementType="ComponentInstance" guid="dd099b13-0e5a-48d3-979f-4d0e30295e81" name="Character Controller" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="98183f31-a685-43cd-92a9-815274f0a81c">
     <transform>
      <translation>
       <position>
@@ -276,7 +276,7 @@
     <extensions />
     <children />
    </element>
-   <element elementType="ComponentInstance" guid="2456bfc1-a00a-4477-a44f-74b44c60a2a4" name="Listener" Schematyc::EMPEnv="clientserver" accessor="Private" typeGUID="bae91d5c-8cfb-40b2-8397-f5a9eedb9ac4">
+   <element elementType="ComponentInstance" guid="2456bfc1-a00a-4477-a44f-74b44c60a2a4" name="Listener" Schematyc::EMPEnv="clientserver" accessor="Public" typeGUID="bae91d5c-8cfb-40b2-8397-f5a9eedb9ac4">
     <properties>
      <listener name="Default Listener">
       <offset x="0" y="0" z="0"/>
