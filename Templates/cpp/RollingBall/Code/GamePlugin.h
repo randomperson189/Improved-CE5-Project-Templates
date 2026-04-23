@@ -20,6 +20,9 @@ public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CGamePlugin, "RollingBall", "{24FE22B8-4592-440B-8E9C-BA5E6F22F721}"_cry_guid)
 
+	PLUGIN_FLOWNODE_REGISTER
+	PLUGIN_FLOWNODE_UNREGISTER
+	
 	virtual ~CGamePlugin();
 	
 	// Cry::IEnginePlugin

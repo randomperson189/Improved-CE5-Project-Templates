@@ -20,6 +20,9 @@ public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CGamePlugin, "Blank", "f01244b0-a4e7-4dc6-91e1-0ed18906fe7c"_cry_guid)
 
+	PLUGIN_FLOWNODE_REGISTER
+	PLUGIN_FLOWNODE_UNREGISTER
+	
 	virtual ~CGamePlugin();
 	
 	// Cry::IEnginePlugin

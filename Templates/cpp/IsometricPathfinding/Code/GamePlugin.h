@@ -20,6 +20,9 @@ public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CGamePlugin, "IsometricPathFinding", "{FC9BD884-49DE-4494-9D64-191734BBB7E3}"_cry_guid)
 
+	PLUGIN_FLOWNODE_REGISTER
+	PLUGIN_FLOWNODE_UNREGISTER
+	
 	virtual ~CGamePlugin();
 	
 	// Cry::IEnginePlugin

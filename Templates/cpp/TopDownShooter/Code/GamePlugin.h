@@ -20,6 +20,9 @@ public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CGamePlugin, "TopDownShooter", "{BCC7B624-C27D-4F45-A578-A00BB040B37C}"_cry_guid)
 	
+	PLUGIN_FLOWNODE_REGISTER
+	PLUGIN_FLOWNODE_UNREGISTER
+	
 	virtual ~CGamePlugin();
 	
 	// Cry::IEnginePlugin

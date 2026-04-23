@@ -20,6 +20,9 @@ public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CGamePlugin, "ThirdPersonShooter", "{0900F201-49F3-4B3C-81D1-0C91CF3C8FDA}"_cry_guid)
 
+	PLUGIN_FLOWNODE_REGISTER
+	PLUGIN_FLOWNODE_UNREGISTER
+	
 	virtual ~CGamePlugin();
 	
 	// Cry::IEnginePlugin
