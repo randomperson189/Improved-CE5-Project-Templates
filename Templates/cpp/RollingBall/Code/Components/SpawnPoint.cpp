@@ -26,3 +26,41 @@ static void RegisterSpawnPointComponent(Schematyc::IEnvRegistrar& registrar)
 }
 
 CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterSpawnPointComponent)
+
+void CSpawnPointComponent::Initialize()
+{
+	if (gEnv->IsEditor())
+	{
+		// Set the model of geometry slot 0
+		GetEntity()->LoadGeometry(0, "%Editor%/Objects/spawnpointhelper.cgf");
+	}
+}
+
+Cry::Entity::EventFlags CSpawnPointComponent::GetEventMask() const
+{
+	return
+		Cry::Entity::EEvent::Reset;
+}
+
+void CSpawnPointComponent::ProcessEvent(const SEntityEvent& event)
+{
+	switch (event.event)
+	{
+	case Cry::Entity::EEvent::Reset:
+	{
+		if (event.nParam[0] != 0)
+		{
+			// Disable rendering of this slot
+			uint32 flags = GetEntity()->GetSlotFlags(0);
+			GetEntity()->SetSlotFlags(0, flags & ~ENTITY_SLOT_RENDER);
+		}
+		else
+		{
+			// Enable rendering of this slot
+			uint32 flags = GetEntity()->GetSlotFlags(0);
+			GetEntity()->SetSlotFlags(0, flags | ENTITY_SLOT_RENDER);
+		}
+	}
+	break;
+	}
+}

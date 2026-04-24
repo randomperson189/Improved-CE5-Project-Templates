@@ -5,13 +5,18 @@
 #include <CryEntitySystem/IEntitySystem.h>
 
 ////////////////////////////////////////////////////////
-// Spawn point to spawn the player
+// Spawn point
 ////////////////////////////////////////////////////////
 class CSpawnPointComponent final : public IEntityComponent
 {
 public:
 	CSpawnPointComponent() = default;
 	virtual ~CSpawnPointComponent() = default;
+
+	virtual void Initialize() override;
+
+	virtual Cry::Entity::EventFlags GetEventMask() const override;
+	virtual void ProcessEvent(const SEntityEvent& event) override;
 
 	// Reflect type to set a unique identifier for this component
 	// and provide additional information to expose it in the sandbox
