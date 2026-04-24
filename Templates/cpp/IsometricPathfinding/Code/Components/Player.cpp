@@ -49,8 +49,9 @@ void CPlayerComponent::Initialize()
 	// Load the character and Mannequin data from file
 	m_pAnimationComponent->LoadFromDisk();
 
-	// Acquire tag identifiers to avoid doing so each update
-	m_walkTagId = m_pAnimationComponent->GetTagId("Walk");
+	// Acquire fragment and tag identifiers to avoid doing so each update
+	m_idleFragmentId = m_pAnimationComponent->GetFragmentId("Idle");
+	m_walkFragmentId = m_pAnimationComponent->GetFragmentId("Walk");
 
 	// Get and initialize the navigation component
 	m_pNavigationComponent = m_pEntity->GetOrCreateComponent<IEntityNavigationComponent>();
@@ -72,6 +73,7 @@ void CPlayerComponent::Initialize()
 	
 	// Register the RemoteReviveOnClient function as a Remote Method Invocation (RMI) that can be executed by the server on clients
 	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
+	SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
 }
 
 void CPlayerComponent::InitializeLocalPlayer()
@@ -108,21 +110,12 @@ void CPlayerComponent::InitializeLocalPlayer()
 				{
 					QuatTS bulletOrigin = pBarrelOutAttachment->GetAttWorldAbsolute();
 
-					SEntitySpawnParams spawnParams;
-					spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+					RemoteShootParams params;
+					params.position = bulletOrigin.t;
+					params.rotation = bulletOrigin.q;
 
-					spawnParams.vPosition = bulletOrigin.t;
-					spawnParams.qRotation = bulletOrigin.q;
-
-					const float bulletScale = 0.05f;
-					spawnParams.vScale = Vec3(bulletScale);
-
-					// Spawn the entity
-					if (IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
-					{
-						// See Bullet.cpp, bullet is propelled in  the rotation and position the entity was spawned with
-						pEntity->CreateComponentClass<CBulletComponent>();
-					}
+					// Tell server to spawn the bullet
+					SRmi<RMI_WRAP(&CPlayerComponent::RemoteShootOnServer)>::InvokeOnServer(this, std::move(params));
 				}
 			}
 		}
@@ -134,7 +127,10 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent->BindAction("player", "shoot", eAID_KeyboardMouse, EKeyId::eKI_Space);
 	
 	// Spawn the cursor
-	SpawnCursorEntity();
+	if (!gEnv->IsEditor())
+	{
+		SpawnCursorEntity();
+	}
 }
 
 Cry::Entity::EventFlags CPlayerComponent::GetEventMask() const
@@ -149,22 +145,6 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-	case Cry::Entity::EEvent::Reset:
-	{
-		// Disable player when leaving game mode.
-		m_isAlive = event.nParam[0] != 0;
-
-		if (m_isAlive)
-		{
-			SpawnCursorEntity();
-		}
-		else
-		{
-			// Removed by Sandbox
-			m_pCursorEntity = nullptr;
-		}
-	}
-	break;
 	case Cry::Entity::EEvent::BecomeLocalPlayer:
 	{
 		InitializeLocalPlayer();
@@ -188,6 +168,29 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 		{
 			// Update the camera component offset
 			UpdateCamera(frameTime);
+		}
+	}
+	break;
+	case Cry::Entity::EEvent::Reset:
+	{
+		// Disable player when leaving game mode.
+		m_isAlive = event.nParam[0] != 0;
+
+		if (event.nParam[0] != 0)
+		{
+			// Reset player when entering game mode
+			OnReadyForGameplayOnServer();
+		}
+
+		// Check if we're entering game mode
+		if (m_isAlive)
+		{
+			SpawnCursorEntity();
+		}
+		else
+		{
+			// Removed by Sandbox
+			m_pCursorEntity = nullptr;
 		}
 	}
 	break;
@@ -223,8 +226,13 @@ void CPlayerComponent::SpawnCursorEntity()
 
 void CPlayerComponent::UpdateAnimation(float frameTime)
 {
-	// Update the Mannequin tags
-	m_pAnimationComponent->SetTagWithId(m_walkTagId, m_pCharacterController->IsWalking());
+	// Update active fragment
+	const FragmentID& desiredFragmentId = m_pCharacterController->IsWalking() ? m_walkFragmentId : m_idleFragmentId;
+	if (m_activeFragmentId != desiredFragmentId)
+	{
+		m_activeFragmentId = desiredFragmentId;
+		m_pAnimationComponent->QueueFragmentWithId(m_activeFragmentId);
+	}
 
 	if (m_pCharacterController->IsWalking())
 	{
@@ -318,6 +326,27 @@ void CPlayerComponent::OnReadyForGameplayOnServer()
 	});
 }
 
+bool CPlayerComponent::RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel)
+{
+	SEntitySpawnParams spawnParams;
+	spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+
+	spawnParams.vPosition = params.position;
+	spawnParams.qRotation = params.rotation;
+
+	const float bulletScale = 0.05f;
+	spawnParams.vScale = Vec3(bulletScale);
+
+	// Spawn the entity
+	if (IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
+	{
+		// See Bullet.cpp, bullet is propelled in  the rotation and position the entity was spawned with
+		pEntity->CreateComponentClass<CBulletComponent>();
+	}
+
+	return true;
+}
+
 bool CPlayerComponent::RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel)
 {
 	// Call the Revive function on this client
@@ -340,4 +369,6 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	// Apply the character to the entity and queue animations
 	m_pAnimationComponent->ResetCharacter();
 	m_pCharacterController->Physicalize();
+
+	m_activeFragmentId = FRAGMENT_ID_INVALID;
 }

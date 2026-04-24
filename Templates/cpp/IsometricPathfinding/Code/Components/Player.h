@@ -72,6 +72,20 @@ protected:
 	// Remote method intended to be called on all remote clients when a player spawns on the server
 	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
 	
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
+
 protected:
 	bool m_isAlive = false;
 
@@ -82,7 +96,9 @@ protected:
 	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
 	IEntityNavigationComponent* m_pNavigationComponent = nullptr;
 
-	TagID m_walkTagId;
+	FragmentID m_idleFragmentId;
+	FragmentID m_walkFragmentId;
+	FragmentID m_activeFragmentId;
 
 	const float m_movementSpeed = 5.0f;
 
