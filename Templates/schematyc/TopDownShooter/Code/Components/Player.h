@@ -1,0 +1,156 @@
+// Copyright 2017-2019 Crytek GmbH / Crytek Group. All rights reserved.
+#pragma once
+
+#include <array>
+#include <numeric>
+
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryMath/Cry_Camera.h>
+
+#include <ICryMannequin.h>
+#include <CrySchematyc/Utils/EnumFlags.h>
+
+#include <DefaultComponents/Cameras/CameraComponent.h>
+#include <DefaultComponents/Physics/CharacterControllerComponent.h>
+#include <DefaultComponents/Geometry/AdvancedAnimationComponent.h>
+#include <DefaultComponents/Input/InputComponent.h>
+#include <DefaultComponents/Audio/ListenerComponent.h>
+
+////////////////////////////////////////////////////////
+// Represents a player participating in gameplay
+////////////////////////////////////////////////////////
+class CPlayerComponent final : public IEntityComponent
+{
+	enum class EInputFlagType
+	{
+		Hold = 0,
+		Toggle
+	};
+
+	enum class EInputFlag : uint8
+	{
+		MoveLeft = 1 << 0,
+		MoveRight = 1 << 1,
+		MoveForward = 1 << 2,
+		MoveBack = 1 << 3,
+		Jump = 1 << 4,
+		MouseMoved = 1 << 5
+	};
+	
+	static constexpr EEntityAspects InputAspect = eEA_GameClientD;
+
+public:
+	CPlayerComponent() = default;
+	virtual ~CPlayerComponent() = default;
+
+	// IEntityComponent
+	virtual void Initialize() override;
+
+	virtual Cry::Entity::EventFlags GetEventMask() const override;
+	virtual void ProcessEvent(const SEntityEvent& event) override;
+	
+	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override;
+	virtual NetworkAspectType GetNetSerializeAspectMask() const override { return InputAspect; }
+	// ~IEntityComponent
+
+	// Reflect type to set a unique identifier for this component
+	static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
+	{
+		desc.SetGUID("{63F4C0C6-32AF-4ACB-8FB0-57D45DD14725}"_cry_guid);
+		desc.AddMember(&CPlayerComponent::m_moveSpeed, 'mspd', "MoveSpeed", "Move Speed", "Speed of the player", 5.0f);
+		desc.AddMember(&CPlayerComponent::m_viewDistanceFromPlayer, 'vdst', "ViewDistanceFromPlayer", "View Distance From Player", "View distance from the player.", 10.0f);
+		desc.AddMember(&CPlayerComponent::m_jumpHeight, 'jhgt', "JumpHeight", "Jump Height", "Height at which the player jumps", 5.0f);
+	}
+
+	void OnReadyForGameplayOnServer();
+	bool IsLocalClient() const { return (m_pEntity->GetFlags() & ENTITY_FLAG_LOCAL_PLAYER) != 0; }
+
+protected:
+	void Revive(const Matrix34& transform);
+
+	void UpdateMovementRequest(float frameTime);
+	void UpdateAnimation(float frameTime);
+	void UpdateCamera(float frameTime);
+	void UpdateCursor(float frameTime);
+
+	void SpawnCursorEntity();
+
+	void HandleInputFlagChange(CEnumFlags<EInputFlag> flags, CEnumFlags<EActionActivationMode> activationMode, EInputFlagType type = EInputFlagType::Hold);
+
+	// Called when this entity becomes the local player, to create client specific setup such as the Camera
+	void InitializeLocalPlayer();
+
+	// Start remote method declarations
+protected:
+	// Parameters to be passed to the RemoteReviveOnClient function
+	struct RemoteReviveParams
+	{
+		// Called once on the server to serialize data to the other clients
+		// Then called once on the other side to deserialize
+		void SerializeWith(TSerialize ser)
+		{
+			// Serialize the position with the 'wrld' compression policy
+			ser.Value("pos", position, 'wrld');
+			// Serialize the rotation with the 'ori0' compression policy
+			ser.Value("rot", rotation, 'ori0');
+		}
+		
+		Vec3 position;
+		Quat rotation;
+	};
+	// Remote method intended to be called on all remote clients when a player spawns on the server
+	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
+	
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
+
+protected:
+	bool m_isAlive = false;
+
+	Cry::DefaultComponents::CCameraComponent* m_pCameraComponent = nullptr;
+	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterController = nullptr;
+	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAnimationComponent = nullptr;
+	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
+	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
+
+	FragmentID m_idleFragmentId;
+	FragmentID m_walkFragmentId;
+	FragmentID m_activeFragmentId;
+
+	Quat m_lookOrientation; //!< Should translate to head orientation in the future
+
+	CEnumFlags<EInputFlag> m_inputFlags;
+
+	Vec2 m_mouseDeltaRotation;
+	Vec3 m_cursorPositionInWorld = ZERO;
+
+	IEntity* m_pCursorEntity = nullptr;
+
+	float m_moveSpeed = 5.0f;
+	Vec2 m_movementDelta;
+
+	float m_viewDistanceFromPlayer = 10.0f;
+	float m_jumpHeight = 5.0f;
+
+	public:
+		void Jump();
+		void Shoot();
+
+		bool IsSwimming();
+
+		struct SInitializeLocalPlayer
+		{
+			SInitializeLocalPlayer() = default;
+		};
+};

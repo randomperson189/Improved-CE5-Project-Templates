@@ -64,7 +64,14 @@ void CPlayerComponent::InitializeLocalPlayer()
 {
 	// Create the camera component, will automatically update the viewport every frame
 	m_pCameraComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCameraComponent>();
+	
+	// Set camera clipping plane values
+	m_pCameraComponent->SetNearPlane(0.1f);
+	m_pCameraComponent->SetFarPlane(8000.0f);
 
+	// Activate camera for the local player
+	m_pCameraComponent->Activate();
+	
 	// Create the audio listener component.
 	m_pAudioListenerComponent = m_pEntity->GetOrCreateComponent<Cry::Audio::DefaultComponents::CListenerComponent>();
 

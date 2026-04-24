@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="da9d7d10-2404-8b0e-2d35-7b0ddb3665d4">
+ <Files>
+  <File path="Scheduler.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">Scheduler</Detail>
+ </Details>
+</AssetMetadata>

@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="9c571176-bfbd-cc88-e3f1-3fb8ecbdb0e3">
+ <Files>
+  <File path="TimeOfDay.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TimeOfDay</Detail>
+ </Details>
+</AssetMetadata>
