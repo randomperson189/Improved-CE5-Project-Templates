@@ -47,6 +47,9 @@ void CGamePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lp
 			// Listen for client connection events, in order to create the local player
 			gEnv->pGameFramework->AddNetworkedClientListener(*this);
 
+			IProceduralClipFactory& proceduralClipFactory = gEnv->pGameFramework->GetMannequinInterface().GetProceduralClipFactory();
+			mannequin::RegisterProceduralClipsForModule(proceduralClipFactory);
+
 			// Don't need to load the map in editor
 			if (!gEnv->IsEditor())
 			{
