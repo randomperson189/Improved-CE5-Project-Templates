@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Crytek GmbH / Crytek Group. All rights reserved.
 #pragma once
 
+#include <array>
+#include <numeric>
+
 #include <CryEntitySystem/IEntityComponent.h>
 #include <CryMath/Cry_Camera.h>
 
@@ -29,7 +32,9 @@ class CPlayerComponent final : public IEntityComponent
 		MoveLeft = 1 << 0,
 		MoveRight = 1 << 1,
 		MoveForward = 1 << 2,
-		MoveBack = 1 << 3
+		MoveBack = 1 << 3,
+		Jump = 1 << 4,
+		MouseMoved = 1 << 5
 	};
 	
 	static constexpr EEntityAspects InputAspect = eEA_GameClientD;
@@ -56,10 +61,10 @@ public:
 
 	void OnReadyForGameplayOnServer();
 	bool IsLocalClient() const { return (m_pEntity->GetFlags() & ENTITY_FLAG_LOCAL_PLAYER) != 0; }
-	
+
 protected:
 	void Revive(const Matrix34& transform);
-	
+
 	void UpdateMovementRequest(float frameTime);
 	void UpdateAnimation(float frameTime);
 	void UpdateCamera(float frameTime);
@@ -72,6 +77,8 @@ protected:
 	// Called when this entity becomes the local player, to create client specific setup such as the Camera
 	void InitializeLocalPlayer();
 	
+	bool IsSwimming();
+
 	// Start remote method declarations
 protected:
 	// Parameters to be passed to the RemoteReviveOnClient function
@@ -93,6 +100,20 @@ protected:
 	// Remote method intended to be called on all remote clients when a player spawns on the server
 	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
 	
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
+
 protected:
 	bool m_isAlive = false;
 
@@ -102,7 +123,11 @@ protected:
 	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
 	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
 
-	TagID m_walkTagId;
+	FragmentID m_idleFragmentId;
+	FragmentID m_walkFragmentId;
+	FragmentID m_activeFragmentId;
+
+	Quat m_lookOrientation; //!< Should translate to head orientation in the future
 
 	CEnumFlags<EInputFlag> m_inputFlags;
 
@@ -110,4 +135,7 @@ protected:
 	Vec3 m_cursorPositionInWorld = ZERO;
 
 	IEntity* m_pCursorEntity = nullptr;
+
+	float m_moveSpeed = 5.0f;
+	Vec2 m_movementDelta;
 };
