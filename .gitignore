@@ -3,3 +3,4 @@ Templates/*/*/solutions/*
 Templates/*/*/user*/*
 Templates/*/*/logbackups/*
 Templates/*/*/Editor/*
+Templates/*/*/*/CMakeLists.txt
