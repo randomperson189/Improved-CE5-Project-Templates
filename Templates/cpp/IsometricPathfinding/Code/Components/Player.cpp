@@ -250,6 +250,20 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		// Send updated transform to the entity, only orientation changes
 		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
 	}
+	else
+	{
+		Ang3 ypr = CCamera::CreateAnglesYPR(Matrix33(m_pEntity->GetWorldAngles()));
+
+		// We only want to affect Z-axis rotation, zero pitch and roll
+		ypr.y = 0;
+		ypr.z = 0;
+
+		// Re-calculate the quaternion based on the corrected yaw
+		Quat newRotation = Quat(CCamera::CreateOrientationYPR(ypr));
+
+		// Send updated transform to the entity, only orientation changes
+		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
+	}
 }
 
 void CPlayerComponent::UpdateCamera(float frameTime)
