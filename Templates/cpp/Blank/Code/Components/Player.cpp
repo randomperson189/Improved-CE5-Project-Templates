@@ -49,18 +49,18 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 	
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
 	// Bind the 'A' key the "moveleft" action
-	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, EKeyId::eKI_A);
+	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, EKeyId::eKI_D);
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
-	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, EKeyId::eKI_W);
+	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, eKI_W);
 
-	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode);  }); 
-	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, EKeyId::eKI_S);
+	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); });
+	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, eKI_S);
 
 	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; });
 	m_pInputComponent->BindAction("player", "mouse_rotateyaw", eAID_KeyboardMouse, EKeyId::eKI_MouseX);
@@ -98,22 +98,7 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 		Vec3 velocity = ZERO;
 
 		// Check input to calculate local space velocity
-		if (m_inputFlags & EInputFlag::MoveLeft)
-		{
-			velocity.x -= moveSpeed * frameTime;
-		}
-		if (m_inputFlags & EInputFlag::MoveRight)
-		{
-			velocity.x += moveSpeed * frameTime;
-		}
-		if (m_inputFlags & EInputFlag::MoveForward)
-		{
-			velocity.y += moveSpeed * frameTime;
-		}
-		if (m_inputFlags & EInputFlag::MoveBack)
-		{
-			velocity.y -= moveSpeed * frameTime;
-		}
+		velocity += (Vec3(m_movementDelta.x, m_movementDelta.y, 0) * moveSpeed) * frameTime;
 
 		// Update the player's transformation
 		Matrix34 transformation = m_pEntity->GetWorldTM();
