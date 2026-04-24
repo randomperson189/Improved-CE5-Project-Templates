@@ -72,17 +72,17 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 	
 	// Register an action, and the callback that will be sent when it's m_pEntity
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) { m_moveDirection += -m_lookOrientation.GetColumn0(); HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode);  });
 	// Bind the 'A' key the "moveleft" action
 	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, EKeyId::eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) { m_moveDirection += m_lookOrientation.GetColumn0(); HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode);  });
 	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, EKeyId::eKI_D);
 
-	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) { m_moveDirection += m_lookOrientation.GetColumn1(); HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode);  });
 	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, EKeyId::eKI_W);
 
-	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) { HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode);  }); 
+	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) { m_moveDirection += -m_lookOrientation.GetColumn1(); HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode);  });
 	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, EKeyId::eKI_S);
 
 	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; });
@@ -172,6 +172,12 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 	{
 		// Disable player when leaving game mode.
 		m_isAlive = event.nParam[0] != 0;
+
+		// Reset player when entering game mode
+		if (event.nParam[0] != 0)
+		{
+			OnReadyForGameplayOnServer();
+		}
 	}
 	break;
 	}
@@ -185,39 +191,43 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 
 		const float moveImpulseStrength = 800.f;
 
-		// Update movement
-		Vec3 direction = ZERO;
+		if (!IsLocalClient() && gEnv->bServer)
+		{
+			if (m_inputFlags & EInputFlag::MoveLeft)
+			{
+				m_moveDirection -= m_lookOrientation.GetColumn0();
+			}
+			if (m_inputFlags & EInputFlag::MoveRight)
+			{
+				m_moveDirection += m_lookOrientation.GetColumn0();
+			}
+			if (m_inputFlags & EInputFlag::MoveForward)
+			{
+				m_moveDirection += m_lookOrientation.GetColumn1();
+			}
+			if (m_inputFlags & EInputFlag::MoveBack)
+			{
+				m_moveDirection -= m_lookOrientation.GetColumn1();
+			}
+		}
 
-		if (m_inputFlags & EInputFlag::MoveLeft)
-		{
-			direction -= m_lookOrientation.GetColumn0();
-		}
-		if (m_inputFlags & EInputFlag::MoveRight)
-		{
-			direction += m_lookOrientation.GetColumn0();
-		}
-		if (m_inputFlags & EInputFlag::MoveForward)
-		{
-			direction += m_lookOrientation.GetColumn1();
-		}
-		if (m_inputFlags & EInputFlag::MoveBack)
-		{
-			direction -= m_lookOrientation.GetColumn1();
-		}
-		
-		direction.z = 0.0f;
+		// Update movement	
+		m_moveDirection.z = 0.0f;
 
 		// Only dispatch the impulse to physics if one was provided
-		if (!direction.IsZero())
+		if (!m_moveDirection.IsZero())
 		{
 			pe_action_impulse impulseAction;
 
 			// Multiply by frame time to keep consistent across machines
-			impulseAction.impulse = direction.GetNormalized() * moveImpulseStrength * frameTime;
+			impulseAction.impulse = m_moveDirection.GetNormalized() * moveImpulseStrength * frameTime;
 
 			pPhysicalEntity->Action(&impulseAction);
 		}
 	}
+
+	// Reset every frame
+	m_moveDirection = ZERO;
 }
 
 void CPlayerComponent::UpdateCamera(float frameTime)
@@ -300,14 +310,26 @@ bool CPlayerComponent::RemoteReviveOnClient(RemoteReviveParams&& params, INetCha
 void CPlayerComponent::Revive(const Matrix34& transform)
 {
 	m_isAlive = true;
-	m_inputFlags.Clear();
-	
+
 	// Set the entity transformation, except if we are in the editor
 	// In the editor case we always prefer to spawn where the viewport is
 	if(!gEnv->IsEditor())
 	{
 		m_pEntity->SetWorldTM(transform);
 	}
+
+	SEntityPhysicalizeParams physParams;
+	physParams.type = PE_RIGID;
+	physParams.mass = 90.f;
+	m_pEntity->Physicalize(physParams);
+
+	// Reset input now that the player respawned
+	m_inputFlags.Clear();
+	NetMarkAspectsDirty(InputAspect);
+
+	m_mouseDeltaRotation = ZERO;
+	m_lookOrientation = m_pEntity->GetRotation();
+	m_moveDirection = ZERO;
 }
 
 void CPlayerComponent::HandleInputFlagChange(const CEnumFlags<EInputFlag> flags, const CEnumFlags<EActionActivationMode> activationMode, const EInputFlagType type)

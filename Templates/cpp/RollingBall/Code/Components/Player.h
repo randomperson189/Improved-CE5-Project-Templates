@@ -109,4 +109,5 @@ protected:
 	Vec2 m_mouseDeltaRotation = ZERO;
 	// Should translate to head orientation in the future
 	Quat m_lookOrientation = IDENTITY;
+	Vec3 m_moveDirection = ZERO;
 };
