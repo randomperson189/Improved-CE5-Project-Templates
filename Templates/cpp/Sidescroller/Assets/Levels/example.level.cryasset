@@ -1,12 +1,13 @@
-<AssetMetadata version="0" type="Level" guid="e9baf15d-b3de-9343-fbce-b899ec5e703e" source="">
+<AssetMetadata version="0" type="Level" guid="e9baf15d-b3de-9343-fbce-b899ec5e703e" source="" timestamp="1777045237">
  <Files>
   <File path="example/example.level"/>
  </Files>
  <Dependencies>
   <Path>%editor%/objects/envcube.cgf</Path>
   <Path>%editor%/objects/envcube.mtl</Path>
-  <Path>%editor%/objects/mtlobjects.mtl</Path>
-  <Path>%editor%/objects/mtlsphere.cgf</Path>
+  <Path>%editor%/objects/gradf.dds</Path>
+  <Path>%editor%/objects/helper_illum.mtl</Path>
+  <Path>%editor%/objects/spawnpointhelper.cgf</Path>
   <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
   <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
   <Path>%engine%/engineassets/icons/livepreview.dds</Path>
@@ -17,18 +18,15 @@
   <Path>%engine%/engineassets/materials/fog/oceanintolowspec.mtl</Path>
   <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
   <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/lens_optics.mtl</Path>
   <Path>%engine%/engineassets/materials/material_default.mtl</Path>
   <Path>%engine%/engineassets/materials/material_terrain_default.mtl</Path>
   <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
-  <Path>%engine%/engineassets/objects/editorprimitive.mtl</Path>
   <Path>%engine%/engineassets/objects/primitive_cube.cgf</Path>
   <Path>%engine%/engineassets/objects/primitive_sphere.cgf</Path>
   <Path>%engine%/engineassets/texturemsg/defaultnouvs.dds</Path>
   <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
-  <Path>%engine%/engineassets/textures/defaults/16_12.dds</Path>
-  <Path>%engine%/engineassets/textures/defaults/16_34.dds</Path>
-  <Path>%engine%/engineassets/textures/defaults/16_5.dds</Path>
-  <Path>%engine%/engineassets/textures/defaults/16_grey.dds</Path>
+  <Path>%engine%/engineassets/textures/skys/night/half_moon.dds</Path>
   <Path>%engine%/engineassets/textures/white.dds</Path>
   <Path>animations/mannequin/adb/firstpersoncontrollerdefinition.xml</Path>
   <Path>animations/mannequin/adb/playerfragmentids.xml</Path>
@@ -86,15 +84,11 @@
   <Path>animations/motusanims/turns/walkturn_rgt_3p.caf</Path>
   <Path>animations/motusanims/walk_bck_3p.caf</Path>
   <Path>animations/motusanims/walk_fwd_3p.caf</Path>
-  <Path>engineassets/materials/sky/sky.mtl</Path>
+  <Path>editor/resourcecache/objects/characters/samplecharacter/mcg_ddna.dds</Path>
+  <Path>editor/resourcecache/objects/characters/samplecharacter/mcg_diff.dds</Path>
+  <Path>editor/resourcecache/objects/characters/samplecharacter/mcg_spec.dds</Path>
   <Path>engineassets/materials/water/ocean_default.mtl</Path>
-  <Path>engineassets/texturemsg/defaultnouvs.dds</Path>
-  <Path>engineassets/textures/grey.dds</Path>
-  <Path>engineassets/textures/skys/night/half_moon.dds</Path>
-  <Path>libs/environmentpresets/example.xml</Path>
-  <Path>materials/bullet.mtl</Path>
-  <Path>materials/objects.mtl</Path>
-  <Path>materials/terrain.mtl</Path>
+  <Path usageCount="1">libs/environmentpresets/example.env</Path>
   <Path>objects/characters/samplecharacter/mcg_ddna.dds</Path>
   <Path>objects/characters/samplecharacter/mcg_diff.dds</Path>
   <Path>objects/characters/samplecharacter/mcg_spec.dds</Path>

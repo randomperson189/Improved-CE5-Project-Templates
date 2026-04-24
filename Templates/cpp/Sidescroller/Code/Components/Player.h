@@ -27,7 +27,11 @@ class CPlayerComponent final : public IEntityComponent
 	enum class EInputFlag : uint8
 	{
 		MoveLeft = 1 << 0,
-		MoveRight = 1 << 1
+		MoveRight = 1 << 1,
+		MoveForward = 1 << 2,
+		MoveBack = 1 << 3,
+		Jump = 1 << 4,
+		MouseMoved = 1 << 5
 	};
 
 	static constexpr EEntityAspects InputAspect = eEA_GameClientD;
@@ -66,6 +70,8 @@ protected:
 
 	// Called when this entity becomes the local player, to create client specific setup such as the Camera
 	void InitializeLocalPlayer();
+
+	bool IsSwimming();
 	
 	// Start remote method declarations
 protected:
@@ -87,6 +93,20 @@ protected:
 	};
 	// Remote method intended to be called on all remote clients when a player spawns on the server
 	bool RemoteReviveOnClient(RemoteReviveParams&& params, INetChannel* pNetChannel);
+
+	struct RemoteShootParams
+	{
+		Vec3 position;
+		Quat rotation;
+
+		void SerializeWith(TSerialize ser)
+		{
+			ser.Value("pos", position, 'wrld');
+			ser.Value("rot", rotation, 'ori0');
+		}
+	};
+
+	bool RemoteShootOnServer(RemoteShootParams&& params, INetChannel* pNetChannel);
 	
 protected:
 	bool m_isAlive = false;
@@ -97,7 +117,13 @@ protected:
 	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
 	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
 
-	TagID m_walkTagId;
+	FragmentID m_idleFragmentId;
+	FragmentID m_walkFragmentId;
 
 	CEnumFlags<EInputFlag> m_inputFlags;
+
+	FragmentID m_activeFragmentId;
+
+	float m_moveSpeed = 5.0f;
+	Vec2 m_movementDelta;
 };
