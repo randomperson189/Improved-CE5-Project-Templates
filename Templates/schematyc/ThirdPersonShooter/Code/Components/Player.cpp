@@ -327,8 +327,19 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	// Also offset upwards
 	localTransform.SetTranslation(Vec3(0, m_viewOffsetForward, m_viewOffsetUp));
 
-	m_pCameraComponent->SetTransformMatrix(localTransform);
-	m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+	if (m_pCameraComponent)
+	{
+		m_pCameraComponent->SetTransformMatrix(localTransform);
+	}
+	if (m_pAudioListenerComponent)
+	{
+		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+	}
+
+	if (!m_pCameraComponent || !m_pAudioListenerComponent)
+	{
+		gEnv->pRenderer->GetIRenderAuxGeom()->Draw2dLabel(50.0f, 50.0f, 1.5f, Col_Orange, false, "Player Schematyc was edited, please reopen the level if it isn't playing propely");
+	}
 }
 
 void CPlayerComponent::Jump()

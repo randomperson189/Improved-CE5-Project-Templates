@@ -191,5 +191,5 @@ protected:
 	MovingAverage<float, 10> m_averagedHorizontalAngularVelocity;
 
 	float m_moveSpeed = 5.0f;
-	Vec2 m_movementDelta;
+	Vec2 m_movementDelta = ZERO;
 };

@@ -127,7 +127,7 @@ protected:
 	FragmentID m_activeFragmentId;
 
 	float m_moveSpeed = 5.0f;
-	Vec2 m_movementDelta;
+	Vec2 m_movementDelta = ZERO;
 
 	float m_viewDistance = 5.0f;
 	float m_viewOffsetUp = 2.0f;

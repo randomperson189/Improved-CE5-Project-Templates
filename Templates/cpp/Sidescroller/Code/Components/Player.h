@@ -125,5 +125,5 @@ protected:
 	FragmentID m_activeFragmentId;
 
 	float m_moveSpeed = 5.0f;
-	Vec2 m_movementDelta;
+	Vec2 m_movementDelta = ZERO;
 };

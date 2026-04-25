@@ -92,5 +92,5 @@ protected:
 
 	CEnumFlags<EInputFlag> m_inputFlags;
 	Vec2 m_mouseDeltaRotation;
-	Vec2 m_movementDelta;
+	Vec2 m_movementDelta = ZERO;
 };
