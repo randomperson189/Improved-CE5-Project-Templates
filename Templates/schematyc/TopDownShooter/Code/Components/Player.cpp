@@ -31,6 +31,44 @@ namespace
 				componentScope.Register(pFunction);
 			}
 
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "Set Move Speed");
+				pFunction->BindInput(1, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "Set View Distance From Player");
+				pFunction->BindInput(1, 'vdst', "View Distance From Player", "View distance from the player");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "Set Jump Height");
+				pFunction->BindInput(1, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}
+
+			// These are here just for reference since you can get reflected component variables in Schematyc by default
+			/*{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "Get Move Speed");
+				pFunction->BindOutput(0, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "Get View Distance From Player");
+				pFunction->BindOutput(0, 'vdst', "View Distance From Player", "View distance from the player");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{86D0520E-E8C5-4ACF-8AC8-D898A4D59A78}"_cry_guid, "Get Jump Height");
+				pFunction->BindOutput(0, 'rspd', "Rotation Speed", "Rotation Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "Get Jump Height");
+				pFunction->BindOutput(0, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}*/
+
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
 		}
 	}
@@ -427,6 +465,32 @@ bool CPlayerComponent::IsSwimming()
 	}
 
 	return false;
+}
+
+void CPlayerComponent::SetMoveSpeed(float moveSpeed)
+{
+	m_moveSpeed = moveSpeed;
+}
+void CPlayerComponent::SetViewDistanceFromPlayer(float viewDistanceFromPlayer)
+{
+	m_viewDistanceFromPlayer = viewDistanceFromPlayer;
+}
+void CPlayerComponent::SetJumpHeight(float jumpHeight)
+{
+	m_jumpHeight = jumpHeight;
+}
+
+float CPlayerComponent::GetMoveSpeed()
+{
+	return m_moveSpeed;
+}
+float CPlayerComponent::GetViewDistanceFromPlayer()
+{
+	return m_viewDistanceFromPlayer;
+}
+float CPlayerComponent::GetJumpHeight()
+{
+	return m_jumpHeight;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()

@@ -31,6 +31,19 @@ namespace
 				componentScope.Register(pFunction);
 			}
 
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "Set View Distance From Player");
+				pFunction->BindInput(1, 'vdst', "View Distance From Player", "View distance from the player");
+				componentScope.Register(pFunction);
+			}
+
+			// These are here just for reference since you can get reflected component variables in Schematyc by default
+			/*{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "Get View Distance From Player");
+				pFunction->BindOutput(0, 'vdst', "View Distance From Player", "View distance from the player");
+				componentScope.Register(pFunction);
+			}*/
+
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
 		}
 	}
@@ -350,6 +363,16 @@ bool CPlayerComponent::IsSwimming()
 	}
 
 	return false;
+}
+
+void CPlayerComponent::SetViewDistanceFromPlayer(float viewDistanceFromPlayer)
+{
+	m_viewDistanceFromPlayer = viewDistanceFromPlayer;
+}
+
+float CPlayerComponent::GetViewDistanceFromPlayer()
+{
+	return m_viewDistanceFromPlayer;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()

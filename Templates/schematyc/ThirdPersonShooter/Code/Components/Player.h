@@ -211,6 +211,22 @@ public:
 
 	bool IsSwimming();
 
+	// Set functions for reflected component values
+	void SetMoveSpeed(float moveSpeed);
+	void SetRotationSpeed(float rotationSpeed);
+	void SetRotationLimits(float minPitch, float maxPitch);
+	void SetViewOffsetForward(float viewOffsetForward);
+	void SetViewOffsetUp(float viewOffsetUp);
+	void SetJumpHeight(float jumpHeight);
+
+	// Get functions for reflected component values
+	float GetMoveSpeed();
+	float GetRotationSpeed();
+	void GetRotationLimits(float& minPitch, float& maxPitch);
+	float GetViewOffsetForward();
+	float GetViewOffsetUp();
+	float GetJumpHeight();
+
 	struct SInitializeLocalPlayer
 	{
 		SInitializeLocalPlayer() = default;

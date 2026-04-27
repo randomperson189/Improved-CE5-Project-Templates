@@ -140,6 +140,18 @@ protected:
 
 		bool IsSwimming();
 
+		// Set functions for reflected component values
+		void SetMoveSpeed(float moveSpeed);
+		void SetViewDistance(float viewDistance);
+		void SetViewOffsetUp(float viewOffsetUp);
+		void SetJumpHeight(float jumpHeight);
+
+		// Get functions for reflected component values
+		float GetMoveSpeed();
+		float GetViewDistance();
+		float GetViewOffsetUp();
+		float GetJumpHeight();
+
 		struct SInitializeLocalPlayer
 		{
 			SInitializeLocalPlayer() = default;

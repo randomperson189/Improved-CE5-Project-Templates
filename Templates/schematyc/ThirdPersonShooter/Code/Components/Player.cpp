@@ -32,6 +32,71 @@ namespace
 				componentScope.Register(pFunction);
 			}
 
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "Set Move Speed");
+				pFunction->BindInput(1, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetRotationSpeed, "{67AB2303-58D1-4339-9635-341AB555B5C7}"_cry_guid, "Set Rotation Speed");
+				pFunction->BindInput(1, 'rspd', "Rotation Speed", "Rotation Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetRotationLimits, "{3AA0F21E-C6B8-4318-9900-77DDB6621B50}"_cry_guid, "Set Rotation Limits");
+				pFunction->BindInput(1, 'minp', "Min Pitch", "Minimum Pitch");
+				pFunction->BindInput(2, 'maxp', "Max Pitch", "Maximum Pitch");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewOffsetForward, "{77CDC4F9-F9FE-4C56-9253-4BE1F50C1968}"_cry_guid, "Set View Offset Forward");
+				pFunction->BindInput(1, 'voff', "View Offset Forward", "View Offset Forward");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewOffsetUp, "{0EC555AE-C1AF-4093-8B4E-49FCE6165692}"_cry_guid, "Set View Offset Up");
+				pFunction->BindInput(1, 'vofu', "View Offset Up", "View Offset Up");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "Set Jump Height");
+				pFunction->BindInput(1, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}
+
+			// These are here just for reference since you can get reflected component variables in Schematyc by default
+			/*{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "Get Move Speed");
+				pFunction->BindOutput(0, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetRotationSpeed, "{14867DF0-505C-4712-9DC1-17F1FD4C7CFF}"_cry_guid, "Get Rotation Speed");
+				pFunction->BindOutput(0, 'rspd', "Rotation Speed", "Rotation Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetRotationLimits, "{962F173C-E50C-4C5B-B751-8F718DA087B4}"_cry_guid, "Get Rotation Limits");
+				pFunction->BindOutput(1, 'minp', "Min Pitch", "Minimum Pitch");
+				pFunction->BindOutput(2, 'maxp', "Max Pitch", "Maximum Pitch");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewOffsetForward, "{4CAD20A5-566D-47A2-AAD1-7A71792B3BF4}"_cry_guid, "Get View Offset Forward");
+				pFunction->BindOutput(0, 'voff', "View Offset Forward", "View Offset Forward");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewOffsetUp, "{6880A27B-8394-471A-8E5B-366533CB8CF2}"_cry_guid, "Get View Offset Up");
+				pFunction->BindOutput(0, 'vofu', "View Offset Up", "View Offset Up");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "Get Jump Height");
+				pFunction->BindOutput(0, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}*/
+
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
 		}
 	}
@@ -384,6 +449,58 @@ bool CPlayerComponent::IsSwimming()
 	}
 
 	return false;
+}
+
+void CPlayerComponent::SetMoveSpeed(float moveSpeed)
+{
+	m_moveSpeed = moveSpeed;
+}
+void CPlayerComponent::SetRotationSpeed(float rotationSpeed)
+{
+	m_rotationSpeed = rotationSpeed;
+}
+void CPlayerComponent::SetRotationLimits(float minPitch, float maxPitch)
+{
+	m_rotationLimitsMinPitch = minPitch;
+	m_rotationLimitsMaxPitch = maxPitch;
+}
+void CPlayerComponent::SetViewOffsetForward(float viewOffsetForward)
+{
+	m_viewOffsetForward = viewOffsetForward;
+}
+void CPlayerComponent::SetViewOffsetUp(float viewOffsetUp)
+{
+	m_viewOffsetUp = viewOffsetUp;
+}
+void CPlayerComponent::SetJumpHeight(float jumpHeight)
+{
+	m_jumpHeight = jumpHeight;
+}
+
+float CPlayerComponent::GetMoveSpeed()
+{
+	return m_moveSpeed;
+}
+float CPlayerComponent::GetRotationSpeed()
+{
+	return m_rotationSpeed;
+}
+void CPlayerComponent::GetRotationLimits(float& minPitch, float& maxPitch)
+{
+	minPitch = m_rotationLimitsMinPitch;
+	maxPitch = m_rotationLimitsMaxPitch;
+}
+float CPlayerComponent::GetViewOffsetForward()
+{
+	return m_viewOffsetForward;
+}
+float CPlayerComponent::GetViewOffsetUp()
+{
+	return m_viewOffsetUp;
+}
+float CPlayerComponent::GetJumpHeight()
+{
+	return m_jumpHeight;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()

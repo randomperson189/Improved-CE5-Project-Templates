@@ -114,6 +114,12 @@ public:
 
 	bool IsSwimming();
 
+	// Set functions for reflected component values
+	void SetViewDistanceFromPlayer(float viewDistanceFromPlayer);
+
+	// Get functions for reflected component values
+	float GetViewDistanceFromPlayer();
+
 	struct SInitializeLocalPlayer
 	{
 		SInitializeLocalPlayer() = default;

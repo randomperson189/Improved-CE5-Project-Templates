@@ -30,6 +30,49 @@ namespace
 				componentScope.Register(pFunction);
 			}
 
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "Set Move Speed");
+				pFunction->BindInput(1, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistance, "{77CDC4F9-F9FE-4C56-9253-4BE1F50C1968}"_cry_guid, "Set View Distance");
+				pFunction->BindInput(1, 'voff', "View Distance", "View Distance");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewOffsetUp, "{0EC555AE-C1AF-4093-8B4E-49FCE6165692}"_cry_guid, "Set View Offset Up");
+				pFunction->BindInput(1, 'vofu', "View Offset Up", "View Offset Up");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "Set Jump Height");
+				pFunction->BindInput(1, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}
+
+			// These are here just for reference since you can get reflected component variables in Schematyc by default
+			/*{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "Get Move Speed");
+				pFunction->BindOutput(0, 'mspd', "Move Speed", "Movement Speed");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistance, "{4CAD20A5-566D-47A2-AAD1-7A71792B3BF4}"_cry_guid, "Get View Distance");
+				pFunction->BindOutput(0, 'voff', "View Distance", "View Distance");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewOffsetUp, "{6880A27B-8394-471A-8E5B-366533CB8CF2}"_cry_guid, "Get View Offset Up");
+				pFunction->BindOutput(0, 'vofu', "View Offset Up", "View Offset Up");
+				componentScope.Register(pFunction);
+			}
+			{
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "Get Jump Height");
+				pFunction->BindOutput(0, 'jhgt', "Jump Height", "Jump Height");
+				componentScope.Register(pFunction);
+			}*/
+
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
 		}
 	}
@@ -332,6 +375,40 @@ bool CPlayerComponent::IsSwimming()
 	}
 
 	return false;
+}
+
+void CPlayerComponent::SetMoveSpeed(float moveSpeed)
+{
+	m_moveSpeed = moveSpeed;
+}
+void CPlayerComponent::SetViewDistance(float viewDistance)
+{
+	m_viewDistance = viewDistance;
+}
+void CPlayerComponent::SetViewOffsetUp(float viewOffsetUp)
+{
+	m_viewOffsetUp = viewOffsetUp;
+}
+void CPlayerComponent::SetJumpHeight(float jumpHeight)
+{
+	m_jumpHeight = jumpHeight;
+}
+
+float CPlayerComponent::GetMoveSpeed()
+{
+	return m_moveSpeed;
+}
+float CPlayerComponent::GetViewDistance()
+{
+	return m_viewDistance;
+}
+float CPlayerComponent::GetViewOffsetUp()
+{
+	return m_viewOffsetUp;
+}
+float CPlayerComponent::GetJumpHeight()
+{
+	return m_jumpHeight;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()
