@@ -1,5 +1,5 @@
 # Improved-CE5-Project-Templates
-These are improved versions of CryEngine 5's default project templates along with some extra ones
+These are improved versions of CryEngine 5's default project templates along with added Schematyc variations of existing ones
 
 ## How to install
 1. Download the files from this repository, via either download zip or git clone
