@@ -1,3 +1,4 @@
+*.ilk
 Templates/*/*/*.log
 Templates/*/*/solutions/*
 Templates/*/*/user*/*
