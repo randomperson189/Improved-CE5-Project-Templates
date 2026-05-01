@@ -158,9 +158,12 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 			return;
 		
 		const float frameTime = event.fParam[0];
-
-		// Update the in-world cursor position
-		UpdateCursor(frameTime);
+		
+		if (IsLocalClient())
+		{
+			// Update the in-world cursor position
+			UpdateCursor(frameTime);
+		}
 
 		// Update the animation state of the character
 		UpdateAnimation(frameTime);

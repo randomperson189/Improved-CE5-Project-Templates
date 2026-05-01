@@ -190,12 +190,15 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 		
 		const float frameTime = event.fParam[0];
 
-		// Update the in-world cursor position
-		UpdateCursor(frameTime);
+		if (IsLocalClient())
+		{
+			// Update the in-world cursor position
+			UpdateCursor(frameTime);
 
-		// Start by updating the movement request we want to send to the character controller
-		// This results in the physical representation of the character moving
-		UpdateMovementRequest(frameTime);
+			// Start by updating the movement request we want to send to the character controller
+			// This results in the physical representation of the character moving
+			UpdateMovementRequest(frameTime);
+		}
 
 		// Update the animation state of the character
 		UpdateAnimation(frameTime);

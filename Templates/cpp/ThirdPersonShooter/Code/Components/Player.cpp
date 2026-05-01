@@ -186,12 +186,15 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 		
 		const float frameTime = event.fParam[0];
 
-		// Start by updating the movement request we want to send to the character controller
-		// This results in the physical representation of the character moving
-		UpdateMovementRequest(frameTime);
+		if (IsLocalClient())
+		{
+			// Start by updating the movement request we want to send to the character controller
+			// This results in the physical representation of the character moving
+			UpdateMovementRequest(frameTime);
 
-		// Process mouse input to update look orientation.
-		UpdateLookDirectionRequest(frameTime);
+			// Process mouse input to update look orientation.
+			UpdateLookDirectionRequest(frameTime);
+		}
 
 		// Update the animation state of the character
 		UpdateAnimation(frameTime);
