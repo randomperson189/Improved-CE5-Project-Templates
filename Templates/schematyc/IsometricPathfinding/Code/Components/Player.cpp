@@ -32,19 +32,20 @@ namespace
 			}
 
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "Set View Distance From Player");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "SetViewDistanceFromPlayer");
 				pFunction->BindInput(1, 'vdst', "View Distance From Player", "View distance from the player");
 				componentScope.Register(pFunction);
 			}
 
 			// These are here just for reference since you can get reflected component variables in Schematyc by default
 			/*{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "Get View Distance From Player");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "GetViewDistanceFromPlayer");
 				pFunction->BindOutput(0, 'vdst', "View Distance From Player", "View distance from the player");
 				componentScope.Register(pFunction);
 			}*/
 
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
+			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SRevive));
 		}
 	}
 
@@ -55,6 +56,12 @@ static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SInitializeLocalP
 {
 	desc.SetGUID("{A0411357-E8B6-4BDC-AF4F-DF49263897DF}"_cry_guid);
 	desc.SetLabel("Initialize Local Player");
+}
+
+static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SRevive>& desc)
+{
+	desc.SetGUID("{7297C852-9EB8-4530-A7AD-E81D1BBFA16A}"_cry_guid);
+	desc.SetLabel("Revive");
 }
 
 void CPlayerComponent::Initialize()
@@ -230,14 +237,6 @@ void CPlayerComponent::SpawnCursorEntity()
 
 void CPlayerComponent::UpdateAnimation(float frameTime)
 {
-	// Update active fragment
-	const FragmentID& desiredFragmentId = m_pCharacterController->IsWalking() ? m_walkFragmentId : m_idleFragmentId;
-	if (m_activeFragmentId != desiredFragmentId)
-	{
-		m_activeFragmentId = desiredFragmentId;
-		m_pAnimationComponent->QueueFragmentWithId(m_activeFragmentId);
-	}
-
 	if (m_pCharacterController->IsWalking())
 	{
 		Quat newRotation = Quat::CreateRotationVDir(m_pCharacterController->GetMoveDirection());
@@ -286,7 +285,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -351,31 +350,15 @@ void CPlayerComponent::Shoot()
 
 bool CPlayerComponent::IsSwimming()
 {
-	if (m_pCharacterController)
+	if (IPhysicalEntity* pPhysEnt = m_pEntity->GetPhysicalEntity())
 	{
-		if (IEntity* pEntity = m_pCharacterController->GetEntity())
-		{
-			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
-			{
-				pe_player_dynamics dyn;
-				pPhysEnt->GetParams(&dyn);
+		pe_player_dynamics dyn;
+		pPhysEnt->GetParams(&dyn);
 
-				return dyn.bSwimming;
-			}
-		}
+		return dyn.bSwimming;
 	}
 
 	return false;
-}
-
-void CPlayerComponent::SetViewDistanceFromPlayer(float viewDistanceFromPlayer)
-{
-	m_viewDistanceFromPlayer = viewDistanceFromPlayer;
-}
-
-float CPlayerComponent::GetViewDistanceFromPlayer()
-{
-	return m_viewDistanceFromPlayer;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()
@@ -452,4 +435,10 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	m_pCharacterController->Physicalize();
 
 	m_activeFragmentId = FRAGMENT_ID_INVALID;
+	
+	if (Schematyc::IObject* const pSchematycObject = m_pEntity->GetSchematycObject())
+	{
+		// Our player has revived, call the Schematyc signal for it now
+		m_pEntity->GetSchematycObject()->ProcessSignal(SRevive(), GetGUID());
+	}
 }

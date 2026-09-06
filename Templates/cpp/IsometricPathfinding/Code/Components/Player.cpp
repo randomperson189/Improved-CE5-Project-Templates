@@ -305,7 +305,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)

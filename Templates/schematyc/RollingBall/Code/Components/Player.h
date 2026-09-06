@@ -118,4 +118,8 @@ public:
 	{
 		SInitializeLocalPlayer() = default;
 	};
+	struct SRevive
+	{
+		SRevive() = default;
+	};
 };

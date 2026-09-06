@@ -93,23 +93,23 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	// Bind the 'A' key the "moveleft" action
 	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
-	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, eKI_W);
 
-	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, eKI_S);
 
-	m_pInputComponent->RegisterAction("player", "controllermove_x", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "controllermove_x", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "controllermove_x", eAID_XboxPad, eKI_XI_ThumbLX);
 
-	m_pInputComponent->RegisterAction("player", "controllermove_y", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "controllermove_y", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "controllermove_y", eAID_XboxPad, eKI_XI_ThumbLY);
 
 	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; HandleInputFlagChange(EInputFlag::MouseMoved, (EActionActivationMode)activationMode); });
@@ -378,7 +378,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -389,18 +389,12 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 
 bool CPlayerComponent::IsSwimming()
 {
-	if (m_pCharacterController)
+	if (IPhysicalEntity* pPhysEnt = m_pEntity->GetPhysicalEntity())
 	{
-		if (IEntity* pEntity = m_pCharacterController->GetEntity())
-		{
-			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
-			{
-				pe_player_dynamics dyn;
-				pPhysEnt->GetParams(&dyn);
+		pe_player_dynamics dyn;
+		pPhysEnt->GetParams(&dyn);
 
-				return dyn.bSwimming;
-			}
-		}
+		return dyn.bSwimming;
 	}
 
 	return false;
@@ -485,6 +479,8 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	
 	m_mouseDeltaRotation = ZERO;
 	m_lookOrientation = m_pEntity->GetRotation();
+	
+	m_movementDelta = ZERO;
 
 	m_mouseDeltaSmoothingFilter.Reset();
 

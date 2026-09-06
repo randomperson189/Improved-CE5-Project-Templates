@@ -90,11 +90,11 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	// Bind the 'A' key the "moveleft" action
 	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
 	m_pInputComponent->RegisterAction("player", "jump", [this](int activationMode, float value)
@@ -235,25 +235,14 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 	if (!m_pCharacterController) return;
 
 	// Base input vector
-	Vec3 input = Vec3(m_movementDelta.x, m_movementDelta.y, 0.0f);
+	Vec3 input = Vec3(-m_movementDelta.y, 0.0f, 0.0f);
 	if (input.GetLengthSquared() > 0.0f)
 		input.Normalize();
 
 	Vec3 finalVelocity = ZERO;
 
-	if (IsSwimming())
-	{
-		if (m_pCameraComponent)
-		{
-			// Rotate input by camera rotation (includes pitch) for 3D swimming
-			finalVelocity = m_pCameraComponent->GetCamera().GetMatrix().TransformVector(input) * m_moveSpeed;
-		}
-	}
-	else
-	{
-		// Land movement: rotate input by entity rotation (XY only)
-		finalVelocity = GetEntity()->GetWorldRotation() * input * m_moveSpeed;
-	}
+	// Land movement: input on global 2D axis
+	finalVelocity = input * m_moveSpeed;
 
 	m_pCharacterController->SetVelocity(finalVelocity);
 }
@@ -268,9 +257,8 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		m_pAnimationComponent->QueueFragmentWithId(m_activeFragmentId);
 	}
 
-	// Rotate player in movement direction (this currently doesn't work properly)
-	// TODO: Figure out how to make camera transform ignore parent rotation
-	/*if (m_pCharacterController->IsWalking())
+	// Rotate player in movement direction
+	if (m_pCharacterController->IsWalking())
 	{
 		Quat newRotation = Quat::CreateRotationVDir(m_pCharacterController->GetMoveDirection());
 
@@ -284,7 +272,7 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		newRotation = Quat(CCamera::CreateOrientationYPR(ypr));
 
 		// Send updated transform to the entity, only orientation changes
-		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
+		m_pEntity->SetRotation(newRotation);
 	}
 	else
 	{
@@ -298,8 +286,8 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		Quat newRotation = Quat(CCamera::CreateOrientationYPR(ypr));
 
 		// Send updated transform to the entity, only orientation changes
-		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
-	}*/
+		m_pEntity->SetRotation(newRotation);
+	}
 }
 
 void CPlayerComponent::UpdateCamera(float frameTime)
@@ -309,11 +297,14 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	const float viewDistance = 5;
 	const float viewOffsetUp = 2.f;
 
+	localTransform.SetRotation33(Matrix33(m_pEntity->GetWorldRotation().GetInverted()) *  Matrix33::CreateRotationZ(DEG2RAD(180)));
+
 	// Offset the player along the forward axis (normally back)
 	// Also offset upwards
-	localTransform.SetTranslation(Vec3(viewDistance, 0, viewOffsetUp));
-	
-	localTransform.SetRotation33(Matrix33::CreateRotationZ(DEG2RAD(90)));
+	Vec3 cameraOffset = -localTransform.GetColumn1() * viewDistance;
+	cameraOffset.z += viewOffsetUp;
+
+	localTransform.SetTranslation(cameraOffset);
 
 	if (m_pCameraComponent)
 	{
@@ -321,7 +312,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -361,18 +352,12 @@ void CPlayerComponent::OnReadyForGameplayOnServer()
 
 bool CPlayerComponent::IsSwimming()
 {
-	if (m_pCharacterController)
+	if (IPhysicalEntity* pPhysEnt = m_pEntity->GetPhysicalEntity())
 	{
-		if (IEntity* pEntity = m_pCharacterController->GetEntity())
-		{
-			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
-			{
-				pe_player_dynamics dyn;
-				pPhysEnt->GetParams(&dyn);
+		pe_player_dynamics dyn;
+		pPhysEnt->GetParams(&dyn);
 
-				return dyn.bSwimming;
-			}
-		}
+		return dyn.bSwimming;
 	}
 
 	return false;
@@ -420,6 +405,8 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	// Reset input now that the player respawned
 	m_inputFlags.Clear();
 	NetMarkAspectsDirty(InputAspect);
+	
+	m_movementDelta = ZERO;
 
 	m_activeFragmentId = FRAGMENT_ID_INVALID;
 }

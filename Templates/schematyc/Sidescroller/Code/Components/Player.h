@@ -119,12 +119,7 @@ protected:
 	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
 	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
 
-	FragmentID m_idleFragmentId;
-	FragmentID m_walkFragmentId;
-
 	CEnumFlags<EInputFlag> m_inputFlags;
-
-	FragmentID m_activeFragmentId;
 
 	float m_moveSpeed = 5.0f;
 	Vec2 m_movementDelta = ZERO;
@@ -134,26 +129,30 @@ protected:
 
 	float m_jumpHeight = 5.0f;
 
-	public:
-		void Jump();
-		void Shoot();
+public:
+	void Jump();
+	void Shoot();
 
-		bool IsSwimming();
+	bool IsSwimming();
 
-		// Set functions for reflected component values
-		void SetMoveSpeed(float moveSpeed);
-		void SetViewDistance(float viewDistance);
-		void SetViewOffsetUp(float viewOffsetUp);
-		void SetJumpHeight(float jumpHeight);
+	// Set functions for reflected component values
+	void SetMoveSpeed(float moveSpeed) { m_moveSpeed = moveSpeed; };
+	void SetViewDistance(float viewDistance) { m_viewDistance = viewDistance; };
+	void SetViewOffsetUp(float viewOffsetUp) { m_viewOffsetUp = viewOffsetUp; };
+	void SetJumpHeight(float jumpHeight) { m_jumpHeight = jumpHeight; };
 
-		// Get functions for reflected component values
-		float GetMoveSpeed();
-		float GetViewDistance();
-		float GetViewOffsetUp();
-		float GetJumpHeight();
+	// Get functions for reflected component values
+	float GetMoveSpeed() { return m_moveSpeed; };
+	float GetViewDistance() { return m_viewDistance; };
+	float GetViewOffsetUp() { return m_viewOffsetUp; };
+	float GetJumpHeight() { return m_jumpHeight; };
 
-		struct SInitializeLocalPlayer
-		{
-			SInitializeLocalPlayer() = default;
-		};
+	struct SInitializeLocalPlayer
+	{
+		SInitializeLocalPlayer() = default;
+	};
+	struct SRevive
+	{
+		SRevive() = default;
+	};
 };

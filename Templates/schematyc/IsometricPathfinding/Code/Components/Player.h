@@ -115,13 +115,17 @@ public:
 	bool IsSwimming();
 
 	// Set functions for reflected component values
-	void SetViewDistanceFromPlayer(float viewDistanceFromPlayer);
+	void SetViewDistanceFromPlayer(float viewDistanceFromPlayer) { m_viewDistanceFromPlayer = viewDistanceFromPlayer; };
 
 	// Get functions for reflected component values
-	float GetViewDistanceFromPlayer();
+	float GetViewDistanceFromPlayer() { return m_viewDistanceFromPlayer; };
 
 	struct SInitializeLocalPlayer
 	{
 		SInitializeLocalPlayer() = default;
+	};
+	struct SRevive
+	{
+		SRevive() = default;
 	};
 };

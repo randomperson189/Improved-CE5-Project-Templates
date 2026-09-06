@@ -112,9 +112,12 @@ public:
 		desc.AddMember(&CPlayerComponent::m_rotationSpeed, 'rspd', "RotationSpeed", "Rotation Speed", "Speed at which the player rotates", 0.002f);
 		desc.AddMember(&CPlayerComponent::m_rotationLimitsMinPitch, 'minp', "RotationLimitsMinPitch", "Rotation Limits Min Pitch", "Minimum rotation pitch limit", -0.84f);
 		desc.AddMember(&CPlayerComponent::m_rotationLimitsMaxPitch, 'maxp', "RotationLimitsMaxPitch", "Rotation Limits Max Pitch", "Maximum rotation pitch limit", 1.5f);
+		desc.AddMember(&CPlayerComponent::m_rotationSmoothing, 'smth', "RotationSmoothing", "Rotation Smoothing", "Smooth player rotation", false);
 		desc.AddMember(&CPlayerComponent::m_viewOffsetForward, 'voff', "ViewOffsetForward", "View Offset Forward", "Forward offset of player camera.", -1.5f);
 		desc.AddMember(&CPlayerComponent::m_viewOffsetUp, 'vofu', "ViewOffsetUp", "View Offset Up", "Upwards offset of player camera.", 2.0f);
 		desc.AddMember(&CPlayerComponent::m_jumpHeight, 'jhgt', "JumpHeight", "Jump Height", "Height at which the player jumps", 5.0f);
+		desc.AddMember(&CPlayerComponent::m_nodSpeed, 'nspd', "LandingNodSpeed", "Landing Nod Speed", "Nod speed when the player lands", 60.0f);
+		desc.AddMember(&CPlayerComponent::m_doTurnAnimation, 'dtrn', "DoTurnAnimation", "Do Turn Animation", "Do turn animation when the player turns", true);
 	}
 
 	void OnReadyForGameplayOnServer();
@@ -177,8 +180,6 @@ protected:
 	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
 	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent = nullptr;
 
-	FragmentID m_idleFragmentId;
-	FragmentID m_walkFragmentId;
 	TagID m_rotateTagId;
 
 	CEnumFlags<EInputFlag> m_inputFlags;
@@ -188,15 +189,17 @@ protected:
 	float m_rotationSpeed = 0.002f;
 	float m_rotationLimitsMinPitch = -0.84f;
 	float m_rotationLimitsMaxPitch = 1.5f;
+	bool m_rotationSmoothing = false;
 
 	float m_viewOffsetForward = -1.5f;
 	float m_viewOffsetUp = 2.0f;
 
 	float m_jumpHeight = 5.0f;
+	float m_nodSpeed = 60.0f;
 
 	int m_cameraJointId = -1;
 
-	FragmentID m_activeFragmentId;
+	bool m_doTurnAnimation = true;
 
 	Quat m_lookOrientation; //!< Should translate to head orientation in the future
 	float m_horizontalAngularVelocity;
@@ -212,23 +215,27 @@ public:
 	bool IsSwimming();
 
 	// Set functions for reflected component values
-	void SetMoveSpeed(float moveSpeed);
-	void SetRotationSpeed(float rotationSpeed);
-	void SetRotationLimits(float minPitch, float maxPitch);
-	void SetViewOffsetForward(float viewOffsetForward);
-	void SetViewOffsetUp(float viewOffsetUp);
-	void SetJumpHeight(float jumpHeight);
+	void SetMoveSpeed(float moveSpeed) { m_moveSpeed = moveSpeed; };
+	void SetRotationSpeed(float rotationSpeed) { m_rotationSpeed = rotationSpeed; };
+	void SetRotationLimits(float minPitch, float maxPitch) { m_rotationLimitsMinPitch = minPitch; m_rotationLimitsMaxPitch = maxPitch; };
+	void SetViewOffsetForward(float viewOffsetForward) { m_viewOffsetForward = viewOffsetForward; };
+	void SetViewOffsetUp(float viewOffsetUp) { m_viewOffsetUp = viewOffsetUp; };
+	void SetJumpHeight(float jumpHeight) { m_jumpHeight = jumpHeight; };
 
 	// Get functions for reflected component values
-	float GetMoveSpeed();
-	float GetRotationSpeed();
-	void GetRotationLimits(float& minPitch, float& maxPitch);
-	float GetViewOffsetForward();
-	float GetViewOffsetUp();
-	float GetJumpHeight();
+	float GetMoveSpeed() { return m_moveSpeed; };
+	float GetRotationSpeed() { return m_rotationSpeed; };
+	void GetRotationLimits(float& minPitch, float& maxPitch) { minPitch = m_rotationLimitsMinPitch; maxPitch = m_rotationLimitsMaxPitch; };
+	float GetViewOffsetForward() { return m_viewOffsetForward; };
+	float GetViewOffsetUp() { return m_viewOffsetUp; };
+	float GetJumpHeight() { return m_jumpHeight; };
 
 	struct SInitializeLocalPlayer
 	{
 		SInitializeLocalPlayer() = default;
+	};
+	struct SRevive
+	{
+		SRevive() = default;
 	};
 };

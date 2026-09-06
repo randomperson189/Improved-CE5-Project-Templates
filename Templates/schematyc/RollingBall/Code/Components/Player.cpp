@@ -26,6 +26,7 @@ namespace
 			}
 
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
+			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SRevive));
 		}
 	}
 
@@ -36,6 +37,12 @@ static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SInitializeLocalP
 {
 	desc.SetGUID("{A0411357-E8B6-4BDC-AF4F-DF49263897DF}"_cry_guid);
 	desc.SetLabel("Initialize Local Player");
+}
+
+static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SRevive>& desc)
+{
+	desc.SetGUID("{7297C852-9EB8-4530-A7AD-E81D1BBFA16A}"_cry_guid);
+	desc.SetLabel("Revive");
 }
 
 void CPlayerComponent::Initialize()
@@ -255,7 +262,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -353,7 +360,14 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 
 	m_mouseDeltaRotation = ZERO;
 	m_lookOrientation = m_pEntity->GetRotation();
+	
 	m_moveDirection = ZERO;
+	
+	if (Schematyc::IObject* const pSchematycObject = m_pEntity->GetSchematycObject())
+	{
+		// Our player has revived, call the Schematyc signal for it now
+		m_pEntity->GetSchematycObject()->ProcessSignal(SRevive(), GetGUID());
+	}
 }
 
 void CPlayerComponent::HandleInputFlagChange(const CEnumFlags<EInputFlag> flags, const CEnumFlags<EActionActivationMode> activationMode, const EInputFlagType type)

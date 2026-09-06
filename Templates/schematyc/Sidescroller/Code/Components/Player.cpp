@@ -31,49 +31,50 @@ namespace
 			}
 
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "Set Move Speed");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "SetMoveSpeed");
 				pFunction->BindInput(1, 'mspd', "Move Speed", "Movement Speed");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistance, "{77CDC4F9-F9FE-4C56-9253-4BE1F50C1968}"_cry_guid, "Set View Distance");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistance, "{77CDC4F9-F9FE-4C56-9253-4BE1F50C1968}"_cry_guid, "SetViewDistance");
 				pFunction->BindInput(1, 'voff', "View Distance", "View Distance");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewOffsetUp, "{0EC555AE-C1AF-4093-8B4E-49FCE6165692}"_cry_guid, "Set View Offset Up");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewOffsetUp, "{0EC555AE-C1AF-4093-8B4E-49FCE6165692}"_cry_guid, "SetViewOffsetUp");
 				pFunction->BindInput(1, 'vofu', "View Offset Up", "View Offset Up");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "Set Jump Height");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "SetJumpHeight");
 				pFunction->BindInput(1, 'jhgt', "Jump Height", "Jump Height");
 				componentScope.Register(pFunction);
 			}
 
 			// These are here just for reference since you can get reflected component variables in Schematyc by default
 			/*{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "Get Move Speed");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "GetMoveSpeed");
 				pFunction->BindOutput(0, 'mspd', "Move Speed", "Movement Speed");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistance, "{4CAD20A5-566D-47A2-AAD1-7A71792B3BF4}"_cry_guid, "Get View Distance");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistance, "{4CAD20A5-566D-47A2-AAD1-7A71792B3BF4}"_cry_guid, "GetViewDistance");
 				pFunction->BindOutput(0, 'voff', "View Distance", "View Distance");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewOffsetUp, "{6880A27B-8394-471A-8E5B-366533CB8CF2}"_cry_guid, "Get View Offset Up");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewOffsetUp, "{6880A27B-8394-471A-8E5B-366533CB8CF2}"_cry_guid, "GetViewOffsetUp");
 				pFunction->BindOutput(0, 'vofu', "View Offset Up", "View Offset Up");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "Get Jump Height");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "GetJumpHeight");
 				pFunction->BindOutput(0, 'jhgt', "Jump Height", "Jump Height");
 				componentScope.Register(pFunction);
 			}*/
 
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
+			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SRevive));
 		}
 	}
 
@@ -86,6 +87,12 @@ static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SInitializeLocalP
 	desc.SetLabel("Initialize Local Player");
 }
 
+static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SRevive>& desc)
+{
+	desc.SetGUID("{7297C852-9EB8-4530-A7AD-E81D1BBFA16A}"_cry_guid);
+	desc.SetLabel("Revive");
+}
+
 void CPlayerComponent::Initialize()
 {
 	// The character controller is responsible for maintaining player physics
@@ -96,10 +103,6 @@ void CPlayerComponent::Initialize()
 
 	// Load the character and Mannequin data from file
 	m_pAnimationComponent->LoadFromDisk();
-
-	// Acquire fragment and tag identifiers to avoid doing so each update
-	m_idleFragmentId = m_pAnimationComponent->GetFragmentId("Idle");
-	m_walkFragmentId = m_pAnimationComponent->GetFragmentId("Walk");
 
 	// Register the RemoteReviveOnClient function as a Remote Method Invocation (RMI) that can be executed by the server on clients
 	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
@@ -132,11 +135,11 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	// Bind the 'A' key the "moveleft" action
 	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
 	// Our local player has initialized, now call the Schematyc signal for it
@@ -241,42 +244,22 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 	if (!m_pCharacterController) return;
 
 	// Base input vector
-	Vec3 input = Vec3(m_movementDelta.x, m_movementDelta.y, 0.0f);
+	Vec3 input = Vec3(-m_movementDelta.y, 0.0f, 0.0f);
 	if (input.GetLengthSquared() > 0.0f)
 		input.Normalize();
 
 	Vec3 finalVelocity = ZERO;
 
-	if (IsSwimming())
-	{
-		if (m_pCameraComponent)
-		{
-			// Rotate input by camera rotation (includes pitch) for 3D swimming
-			finalVelocity = m_pCameraComponent->GetCamera().GetMatrix().TransformVector(input) * m_moveSpeed;
-		}
-	}
-	else
-	{
-		// Land movement: rotate input by entity rotation (XY only)
-		finalVelocity = GetEntity()->GetWorldRotation() * input * m_moveSpeed;
-	}
+	// Land movement: input on global 2D axis
+	finalVelocity = input * m_moveSpeed;
 
 	m_pCharacterController->SetVelocity(finalVelocity);
 }
 
 void CPlayerComponent::UpdateAnimation(float frameTime)
 {
-	// Update active fragment
-	const FragmentID& desiredFragmentId = m_pCharacterController->IsWalking() ? m_walkFragmentId : m_idleFragmentId;
-	if (m_activeFragmentId != desiredFragmentId)
-	{
-		m_activeFragmentId = desiredFragmentId;
-		m_pAnimationComponent->QueueFragmentWithId(m_activeFragmentId);
-	}
-
-	// Rotate player in movement direction (this currently doesn't work properly)
-	// TODO: Figure out how to make camera transform ignore parent rotation
-	/*if (m_pCharacterController->IsWalking())
+	// Rotate player in movement direction
+	if (m_pCharacterController->IsWalking())
 	{
 		Quat newRotation = Quat::CreateRotationVDir(m_pCharacterController->GetMoveDirection());
 
@@ -290,7 +273,7 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		newRotation = Quat(CCamera::CreateOrientationYPR(ypr));
 
 		// Send updated transform to the entity, only orientation changes
-		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
+		m_pEntity->SetRotation(newRotation);
 	}
 	else
 	{
@@ -304,22 +287,22 @@ void CPlayerComponent::UpdateAnimation(float frameTime)
 		Quat newRotation = Quat(CCamera::CreateOrientationYPR(ypr));
 
 		// Send updated transform to the entity, only orientation changes
-		m_pEntity->SetPosRotScale(m_pEntity->GetWorldPos(), newRotation, Vec3(1, 1, 1));
-	}*/
+		m_pEntity->SetRotation(newRotation);
+	}
 }
 
 void CPlayerComponent::UpdateCamera(float frameTime)
 {
 	Matrix34 localTransform = IDENTITY;
-
-	const float viewDistance = 5;
-	const float viewOffsetUp = 2.f;
+	
+	localTransform.SetRotation33(Matrix33(m_pEntity->GetWorldRotation().GetInverted()) *  Matrix33::CreateRotationZ(DEG2RAD(180)));
 
 	// Offset the player along the forward axis (normally back)
 	// Also offset upwards
-	localTransform.SetTranslation(Vec3(viewDistance, 0, viewOffsetUp));
-	
-	localTransform.SetRotation33(Matrix33::CreateRotationZ(DEG2RAD(90)));
+	Vec3 cameraOffset = -localTransform.GetColumn1() * m_viewDistance;
+	cameraOffset.z += m_viewOffsetUp;
+
+	localTransform.SetTranslation(cameraOffset);
 
 	if (m_pCameraComponent)
 	{
@@ -327,7 +310,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -363,55 +346,15 @@ void CPlayerComponent::Shoot()
 
 bool CPlayerComponent::IsSwimming()
 {
-	if (m_pCharacterController)
+	if (IPhysicalEntity* pPhysEnt = m_pEntity->GetPhysicalEntity())
 	{
-		if (IEntity* pEntity = m_pCharacterController->GetEntity())
-		{
-			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
-			{
-				pe_player_dynamics dyn;
-				pPhysEnt->GetParams(&dyn);
+		pe_player_dynamics dyn;
+		pPhysEnt->GetParams(&dyn);
 
-				return dyn.bSwimming;
-			}
-		}
+		return dyn.bSwimming;
 	}
 
 	return false;
-}
-
-void CPlayerComponent::SetMoveSpeed(float moveSpeed)
-{
-	m_moveSpeed = moveSpeed;
-}
-void CPlayerComponent::SetViewDistance(float viewDistance)
-{
-	m_viewDistance = viewDistance;
-}
-void CPlayerComponent::SetViewOffsetUp(float viewOffsetUp)
-{
-	m_viewOffsetUp = viewOffsetUp;
-}
-void CPlayerComponent::SetJumpHeight(float jumpHeight)
-{
-	m_jumpHeight = jumpHeight;
-}
-
-float CPlayerComponent::GetMoveSpeed()
-{
-	return m_moveSpeed;
-}
-float CPlayerComponent::GetViewDistance()
-{
-	return m_viewDistance;
-}
-float CPlayerComponent::GetViewOffsetUp()
-{
-	return m_viewOffsetUp;
-}
-float CPlayerComponent::GetJumpHeight()
-{
-	return m_jumpHeight;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()
@@ -457,7 +400,7 @@ bool CPlayerComponent::RemoteShootOnServer(RemoteShootParams&& params, INetChann
 	// Spawn the entity
 	if (IEntity* pEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
 	{
-		// See Bullet.cpp, bullet is propelled in  the rotation and position the entity was spawned with
+		// See Bullet.cpp, bullet is propelled in the rotation and position the entity was spawned with
 		//pEntity->CreateComponentClass<CBulletComponent>();
 	}
 
@@ -485,8 +428,14 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	// Reset input now that the player respawned
 	m_inputFlags.Clear();
 	NetMarkAspectsDirty(InputAspect);
+	
+	m_movementDelta = ZERO;
 
-	m_activeFragmentId = FRAGMENT_ID_INVALID;
+	if (Schematyc::IObject* const pSchematycObject = m_pEntity->GetSchematycObject())
+	{
+		// Our player has revived, call the Schematyc signal for it now
+		m_pEntity->GetSchematycObject()->ProcessSignal(SRevive(), GetGUID());
+	}
 }
 
 void CPlayerComponent::HandleInputFlagChange(const CEnumFlags<EInputFlag> flags, const CEnumFlags<EActionActivationMode> activationMode, const EInputFlagType type)

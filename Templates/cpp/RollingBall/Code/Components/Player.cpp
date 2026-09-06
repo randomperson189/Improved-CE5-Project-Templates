@@ -279,7 +279,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -347,6 +347,7 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 
 	m_mouseDeltaRotation = ZERO;
 	m_lookOrientation = m_pEntity->GetRotation();
+	
 	m_moveDirection = ZERO;
 }
 

@@ -32,44 +32,45 @@ namespace
 			}
 
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "Set Move Speed");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetMoveSpeed, "{C882D81E-1C87-428F-8418-B6896A85577B}"_cry_guid, "SetMoveSpeed");
 				pFunction->BindInput(1, 'mspd', "Move Speed", "Movement Speed");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "Set View Distance From Player");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetViewDistanceFromPlayer, "{AB38F4A7-83DF-4D2B-8006-3B8720ECC230}"_cry_guid, "SetViewDistanceFromPlayer");
 				pFunction->BindInput(1, 'vdst', "View Distance From Player", "View distance from the player");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "Set Jump Height");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::SetJumpHeight, "{0F5CE010-EE3B-4098-ACDE-7B85E3445B50}"_cry_guid, "SetJumpHeight");
 				pFunction->BindInput(1, 'jhgt', "Jump Height", "Jump Height");
 				componentScope.Register(pFunction);
 			}
 
 			// These are here just for reference since you can get reflected component variables in Schematyc by default
 			/*{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "Get Move Speed");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetMoveSpeed, "{0761CED9-067F-4C04-8E7F-170E0F5CFE66}"_cry_guid, "GetMoveSpeed");
 				pFunction->BindOutput(0, 'mspd', "Move Speed", "Movement Speed");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "Get View Distance From Player");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetViewDistanceFromPlayer, "{9B250152-9FA3-4D96-88D8-768DD5078B7E}"_cry_guid, "GetViewDistanceFromPlayer");
 				pFunction->BindOutput(0, 'vdst', "View Distance From Player", "View distance from the player");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{86D0520E-E8C5-4ACF-8AC8-D898A4D59A78}"_cry_guid, "Get Jump Height");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{86D0520E-E8C5-4ACF-8AC8-D898A4D59A78}"_cry_guid, "GetJumpHeight");
 				pFunction->BindOutput(0, 'rspd', "Rotation Speed", "Rotation Speed");
 				componentScope.Register(pFunction);
 			}
 			{
-				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "Get Jump Height");
+				auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CPlayerComponent::GetJumpHeight, "{D45E00F5-4259-4699-A86E-70168B324A73}"_cry_guid, "GetJumpHeight");
 				pFunction->BindOutput(0, 'jhgt', "Jump Height", "Jump Height");
 				componentScope.Register(pFunction);
 			}*/
 
 			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SInitializeLocalPlayer));
+			componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CPlayerComponent::SRevive));
 		}
 	}
 
@@ -80,6 +81,12 @@ static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SInitializeLocalP
 {
 	desc.SetGUID("{A0411357-E8B6-4BDC-AF4F-DF49263897DF}"_cry_guid);
 	desc.SetLabel("Initialize Local Player");
+}
+
+static void ReflectType(Schematyc::CTypeDesc<CPlayerComponent::SRevive>& desc)
+{
+	desc.SetGUID("{7297C852-9EB8-4530-A7AD-E81D1BBFA16A}"_cry_guid);
+	desc.SetLabel("Revive");
 }
 
 void CPlayerComponent::Initialize()
@@ -106,10 +113,6 @@ void CPlayerComponent::Initialize()
 
 	// Load the character and Mannequin data from file
 	m_pAnimationComponent->LoadFromDisk();
-
-	// Acquire fragment and tag identifiers to avoid doing so each update
-	m_idleFragmentId = m_pAnimationComponent->GetFragmentId("Idle");
-	m_walkFragmentId = m_pAnimationComponent->GetFragmentId("Walk");
 	
 	// Register the RemoteReviveOnClient function as a Remote Method Invocation (RMI) that can be executed by the server on clients
 	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::Register(this, eRAT_NoAttach, false, eNRT_ReliableOrdered);
@@ -146,23 +149,23 @@ void CPlayerComponent::InitializeLocalPlayer()
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
 	// Register an action, and the callback that will be sent when it's triggered
-	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveleft", [this](int activationMode, float value) {m_movementDelta.x = -value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	// Bind the 'A' key the "moveleft" action
 	m_pInputComponent->BindAction("player", "moveleft", eAID_KeyboardMouse, eKI_A);
 
-	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveright", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveRight, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveright", eAID_KeyboardMouse, eKI_D);
 
-	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveforward", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveforward", eAID_KeyboardMouse, eKI_W);
 
-	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "moveback", [this](int activationMode, float value) {m_movementDelta.y = -value; HandleInputFlagChange(EInputFlag::MoveBack, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "moveback", eAID_KeyboardMouse, eKI_S);
 
-	m_pInputComponent->RegisterAction("player", "controllermove_x", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "controllermove_x", [this](int activationMode, float value) {m_movementDelta.x = value; HandleInputFlagChange(EInputFlag::MoveLeft, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "controllermove_x", eAID_XboxPad, eKI_XI_ThumbLX);
 
-	m_pInputComponent->RegisterAction("player", "controllermove_y", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); });
+	m_pInputComponent->RegisterAction("player", "controllermove_y", [this](int activationMode, float value) {m_movementDelta.y = value; HandleInputFlagChange(EInputFlag::MoveForward, (EActionActivationMode)activationMode); if (activationMode == eAAM_OnPress || activationMode == eAAM_OnRelease) { UpdateMovementRequest(0); }});
 	m_pInputComponent->BindAction("player", "controllermove_y", eAID_XboxPad, eKI_XI_ThumbLY);
 
 	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { m_mouseDeltaRotation.x -= value; HandleInputFlagChange(EInputFlag::MouseMoved, (EActionActivationMode)activationMode); });
@@ -337,14 +340,6 @@ void CPlayerComponent::UpdateMovementRequest(float frameTime)
 
 void CPlayerComponent::UpdateAnimation(float frameTime)
 {
-	// Update active fragment
-	const FragmentID& desiredFragmentId = m_pCharacterController->IsWalking() ? m_walkFragmentId : m_idleFragmentId;
-	if (m_activeFragmentId != desiredFragmentId)
-	{
-		m_activeFragmentId = desiredFragmentId;
-		m_pAnimationComponent->QueueFragmentWithId(m_activeFragmentId);
-	}
-
 	if (m_pCursorEntity != nullptr)
 	{
 		Vec3 dir = m_pCursorEntity->GetWorldPos() - m_pEntity->GetWorldPos();
@@ -382,7 +377,7 @@ void CPlayerComponent::UpdateCamera(float frameTime)
 	}
 	if (m_pAudioListenerComponent)
 	{
-		m_pAudioListenerComponent->SetOffset(localTransform.GetTranslation());
+		m_pAudioListenerComponent->SetTransformMatrix(m_pCameraComponent->GetTransform());
 	}
 
 	if (!m_pCameraComponent || !m_pAudioListenerComponent)
@@ -453,47 +448,15 @@ void CPlayerComponent::Shoot()
 
 bool CPlayerComponent::IsSwimming()
 {
-	if (m_pCharacterController)
+	if (IPhysicalEntity* pPhysEnt = m_pEntity->GetPhysicalEntity())
 	{
-		if (IEntity* pEntity = m_pCharacterController->GetEntity())
-		{
-			if (IPhysicalEntity* pPhysEnt = pEntity->GetPhysicalEntity())
-			{
-				pe_player_dynamics dyn;
-				pPhysEnt->GetParams(&dyn);
+		pe_player_dynamics dyn;
+		pPhysEnt->GetParams(&dyn);
 
-				return dyn.bSwimming;
-			}
-		}
+		return dyn.bSwimming;
 	}
 
 	return false;
-}
-
-void CPlayerComponent::SetMoveSpeed(float moveSpeed)
-{
-	m_moveSpeed = moveSpeed;
-}
-void CPlayerComponent::SetViewDistanceFromPlayer(float viewDistanceFromPlayer)
-{
-	m_viewDistanceFromPlayer = viewDistanceFromPlayer;
-}
-void CPlayerComponent::SetJumpHeight(float jumpHeight)
-{
-	m_jumpHeight = jumpHeight;
-}
-
-float CPlayerComponent::GetMoveSpeed()
-{
-	return m_moveSpeed;
-}
-float CPlayerComponent::GetViewDistanceFromPlayer()
-{
-	return m_viewDistanceFromPlayer;
-}
-float CPlayerComponent::GetJumpHeight()
-{
-	return m_jumpHeight;
 }
 
 void CPlayerComponent::OnReadyForGameplayOnServer()
@@ -573,12 +536,20 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	m_inputFlags.Clear();
 	NetMarkAspectsDirty(InputAspect);
 	
+	m_movementDelta = ZERO;
+
 	m_mouseDeltaRotation = ZERO;
 	m_lookOrientation = m_pEntity->GetRotation();
+	
+	m_movementDelta = ZERO;
 
 	m_cursorPositionInWorld = ZERO;
-
-	m_activeFragmentId = FRAGMENT_ID_INVALID;
+	
+	if (Schematyc::IObject* const pSchematycObject = m_pEntity->GetSchematycObject())
+	{
+		// Our player has revived, call the Schematyc signal for it now
+		m_pEntity->GetSchematycObject()->ProcessSignal(SRevive(), GetGUID());
+	}
 }
 
 void CPlayerComponent::HandleInputFlagChange(const CEnumFlags<EInputFlag> flags, const CEnumFlags<EActionActivationMode> activationMode, const EInputFlagType type)
