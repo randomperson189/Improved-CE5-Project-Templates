@@ -366,7 +366,7 @@ void CPlayerComponent::OnReadyForGameplayOnServer()
 	Revive(newTransform);
 
 	// Invoke the RemoteReviveOnClient function on all remote clients, to ensure that Revive is called across the network
-	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnOtherClients(this, RemoteReviveParams{ newTransform.GetTranslation(), Quat(newTransform) });
+	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnRemoteClients(this, RemoteReviveParams{ newTransform.GetTranslation(), Quat(newTransform) });
 
 	// Go through all other players, and send the RemoteReviveOnClient on their instances to the new player that is ready for gameplay
 	const int channelId = m_pEntity->GetNetEntity()->GetChannelId();

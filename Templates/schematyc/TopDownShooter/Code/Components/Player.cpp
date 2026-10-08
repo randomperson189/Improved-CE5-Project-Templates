@@ -468,7 +468,7 @@ void CPlayerComponent::OnReadyForGameplayOnServer()
 	Revive(newTransform);
 	
 	// Invoke the RemoteReviveOnClient function on all remote clients, to ensure that Revive is called across the network
-	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnOtherClients(this, RemoteReviveParams{ newTransform.GetTranslation(), Quat(newTransform) });
+	SRmi<RMI_WRAP(&CPlayerComponent::RemoteReviveOnClient)>::InvokeOnRemoteClients(this, RemoteReviveParams{ newTransform.GetTranslation(), Quat(newTransform) });
 
 	// Go through all other players, and send the RemoteReviveOnClient on their instances to the new player that is ready for gameplay
 	const int channelId = m_pEntity->GetNetEntity()->GetChannelId();
@@ -539,7 +539,12 @@ void CPlayerComponent::Revive(const Matrix34& transform)
 	m_movementDelta = ZERO;
 
 	m_mouseDeltaRotation = ZERO;
-	m_lookOrientation = m_pEntity->GetRotation();
+	
+	// Reset only pitch and roll of look rotation
+	Ang3 angles = Ang3::GetAnglesXYZ(m_pEntity->GetRotation());
+	angles.x = 0.0f;
+	angles.y = 0.0f;
+	m_lookOrientation = Quat::CreateRotationXYZ(angles);
 	
 	m_movementDelta = ZERO;
 
